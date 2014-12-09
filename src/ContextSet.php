@@ -11,6 +11,14 @@ class ContextSet
 		$this->contexts = $contexts;
 	}
 
+    public function reorder(array $sequence)
+    {
+        $flipped = array_flip($sequence);
+        $contexts = array_replace($flipped, $this->contexts);
+
+        return $this->contexts = array_intersect_key($contexts, $flipped);
+    }
+
 	public function addContext($contextGroup, $contextValue)
 	{
 		$this->contexts[$contextGroup] = $contextValue;

@@ -4,67 +4,54 @@ require './vendor/autoload.php';
 
 use Jlem\Context\ContextSet;
 use Jlem\Context\ConfigurationSet;
-use Jlem\Context\Settings;
+use Jlem\Context\Mergers\SimpleMerger;
+use Jlem\Context\Mergers\ComplexMerger;
+use Jlem\Context\Context;
+
 
 $configs = [
-	'default' => [
-		'this' => true,
-		'that' => false,
-		'those' => ['orange', 'apple', 'banana']
+	'common' => [
+		'costs_are_editable' => true,
+		'default_play_cost' => '3.00',
+		'allowed_scoring_types' => ['High Score', 'Cumulative Bucks', 'Cumulative Score'],
+        'plaque_image_name' => 'plaque.jpg'
 	],
-	'game' => [
-		'starcraft2' => [
-			'this' => true,
-			'that' => false,
-			'those' => ['protoss', 'terran', 'zerg']
-		],
-		'dota2' => [
-			'this' => true,
-			'that' => false,
-			'those' => ['something', 'something', 'something']
-		]
-	],
-	'user' => [
-		'moderator' => [
-			'this' => true,
-			'that' => false,
-			'those' => []
-		],
-		'admin' => [
-			'this' => true,
-			'that' => false,
-			'those' => ['up', 'down']
-		],
-	],
-	'country' => [
-		'us' => [
-			'this' => true,
-			'that' => false,
-			'those' => ['long', 'list', 'of', 'settings']
-		],
+	'overrides' => [
 		'ca' => [
-			'this' => true,
-			'that' => false,
-			'those' => ['orange', 'apple', 'banana']
-		],
-	]
+            'bbhd' => [
+                'costs_are_editable' => false,
+            ]
+		]
+    ],
+    'defaults' => [
+        'bbhd' => [
+            'allowed_scoring_types' => ['High Score'],
+            'costs_are_editable' => 'default'
+        ],
+        'admin' => [
+            'allowed_scoring_types' => ['Low Score'],
+            'costs_are_editable' => 'smurfs'
+        ],
+        'operator' => [
+            'game_machine_repo' => 'OperatorGameMachineRepository'
+        ]
+    ]
 ];
 
+
 $contexts = [
-	'game' => 'starcraft2',
-	'user' => 'admin',
-	'country' => 'us'
+	'user' => 'operator',
+	'game' => 'bbhd',
+	'country' => 'ca'
 ];
+
 
 $Context = new ContextSet($contexts);
 $Config = new ConfigurationSet($configs);
-$Settings = new Settings($Context, $Config);
+$Merger = new ComplexMerger($Context, $Config);
+$Context = new Context($Merger);
 
-$Settings->load(['country!', 'game', 'user']);
-var_dump($Settings->get('those'));
 
-$Settings->load('country');
-var_dump($Settings->get('those'));
-
-$Settings->load('game');
-var_dump($Settings->get('those'));
+$Context->load();
+$actual = $Context->get('default_play_cost');
+var_dump($actual);
