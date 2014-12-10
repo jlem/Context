@@ -1,0 +1,37 @@
+[
+    {
+        "name": "jlem/arrayok",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/jlem/ArrayOk.git",
+            "reference": "416f1dd48e49b27562a419b49057c76ecc002cb6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/jlem/ArrayOk/zipball/416f1dd48e49b27562a419b49057c76ecc002cb6",
+            "reference": "416f1dd48e49b27562a419b49057c76ecc002cb6",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2014-12-10 21:40:28",
+        "type": "library",
+        "installation-source": "source",
+        "autoload": {
+            "psr-4": {
+                "Jlem\\ArrayOk\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "authors": [
+            {
+                "name": "Jon",
+                "email": "agmlauncher@gmail.com"
+            }
+        ],
+        "description": "A simple object wrapper/decorator for arrays"
+    }
+]

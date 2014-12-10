@@ -8,6 +8,8 @@ use Jlem\Context\Mergers\SimpleMerger;
 use Jlem\Context\Mergers\ComplexMerger;
 use Jlem\Context\Context;
 
+use Jlem\ArrayOk\ArrayOk;
+
 
 $configs = [
 	'common' => [
@@ -52,6 +54,6 @@ $Merger = new ComplexMerger($Context, $Config);
 $Context = new Context($Merger);
 
 
-$Context->load();
-$actual = $Context->get('default_play_cost');
+$Context->load('country.game.user');
+$actual = $Context->get();
 var_dump($actual);

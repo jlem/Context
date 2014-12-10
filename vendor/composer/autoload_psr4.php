@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Jlem\\Context\\' => array($baseDir . '/src'),
+    'Jlem\\ArrayOk\\' => array($vendorDir . '/jlem/arrayok/src'),
 );

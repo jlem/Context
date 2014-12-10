@@ -1,14 +1,15 @@
 <?php namespace Jlem\Context;
 
 use Jlem\Context\Exceptions\UndefinedContextException;
+use Jlem\ArrayOk\ArrayOk;
 
-class ContextSet
+class ContextSet extends ArrayOk
 {
 	protected $contexts;
 
 	public function __construct(array $contexts)
 	{
-		$this->contexts = $contexts;
+        $this->contexts = $contexts;
 	}
 
     public function reorder(array $sequence)

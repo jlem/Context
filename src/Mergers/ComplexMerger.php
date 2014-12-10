@@ -28,7 +28,7 @@ class ComplexMerger implements MergerInterface
 	public function mergeContexts($contextSequence)
 	{
         // Replace dot notation with an array
-        $sequence = $this->normalizeSequence($contextSequence);
+        $sequence = $this->Context->normalizeKeys($contextSequence);
 
         // Reorder the initial contexts by the requested sequence order
         $contexts = $this->Context->reorder($sequence);
@@ -36,10 +36,12 @@ class ComplexMerger implements MergerInterface
         // Get config data using the context as one big complex key for nested lookups
         $overrides = $this->Config->findOverrides($contexts);
 
-        $toMerge[] = $this->Config->getCommon();
-        
+        $toMerge[] = $this->Config['common']->toArray();
+
         foreach($contexts as $context) {
-            $toMerge[] = $this->Config->findDefault($context);
+            if ($default = $this->Config['defaults'][$context]) {
+                $toMerge[] = $default->toArray();
+            }
         }
 
         $toMerge[] = $overrides;
@@ -62,23 +64,4 @@ class ComplexMerger implements MergerInterface
     {
         $this->Context = $Context;
     }
-    
-
-
-    /**
-     * Converts the context sequence to an array if dot notation string, or passes through if already array
-     *
-     * @param mixed string|array $contextSequence
-     * @access protected
-     * @return array
-    */
-
-	protected function normalizeSequence($contextSequence)
-	{
-		if (is_string($contextSequence)) {
-			return explode('.', $contextSequence);
-		}
-		
-		return $contextSequence;
-	}
 }
