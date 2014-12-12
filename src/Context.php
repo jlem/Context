@@ -1,34 +1,24 @@
 <?php namespace Jlem\Context;
 
-use Jlem\Context\Mergers\MergerInterface;
+use Jlem\Context\Filters\Filter;
+use Jlem\ArrayOk\ArrayOk;
 
 class Context
 {
-    protected $Merger;
-	protected $merged;
-
-	public function __construct(MergerInterface $Merger)
-	{
-		$this->Merger = $Merger;
-	}
+    protected $filters = [];
 
 
+    public function addFilter($name, Filter $Filter)
+    {
+        $this->filters[$name] = $Filter;
+    }
 
-    /**
-     * Uses the provided context cascade sequence to return the correct config settings
-     * Contexts cascade from left to right, meaning the rightmost context will override
-     * anything before it, and so on. Contexts that don't exist fall back from right to left
-     * 
-     * @example: user.country.section or ['user', 'country', 'section']
-     * @param mixed string|array $contextSequence
-     * @access public
-     * @return array
-    */
 
-	public function load($contextSequence = [])
-	{
-		return $this->merged = $this->Merger->mergeContexts($contextSequence);
-	}
+
+    public function filter($name)
+    {
+        return $this->filters[$name];
+    }
 
 
     
@@ -40,10 +30,10 @@ class Context
      * @return mixed
     */
 
-	public function get($key = null)
+	public function get($key = null, $forceMerge = false)
 	{
-        if (empty($this->merged)) {
-            throw new \UnderflowException('The flattened config is empty and there is nothing to get, please run `load($contextOrder)` first');
+        if ($forceMerge || empty($this->merged)) {
+            $this->merge();
         }
 
         if (!$key) {
@@ -66,5 +56,17 @@ class Context
     public function changeContext(ContextSet $ContextSet)
     {
         $this->Merger->changeContext($ContextSet);
+    }
+
+
+    protected function merge()
+    {
+        $toMerge = [];
+
+        foreach ($this->filters as $filter) {
+            $toMerge[] = $filter->getData();
+        }
+
+        return $this->merged = new ArrayOk(call_user_func_array('array_merge', $toMerge));
     }
 }
