@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bb07070669f1a77a5be52bb7a296b8fc",
+    "hash": "8141f8f21ce5107ca61d1fcdfe2519a9",
     "packages": [
         {
             "name": "jlem/arrayok",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jlem/ArrayOk.git",
-                "reference": "416f1dd48e49b27562a419b49057c76ecc002cb6"
+                "reference": "107d1f2e96d4bee83d567077e11aa25e93e85197"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jlem/ArrayOk/zipball/416f1dd48e49b27562a419b49057c76ecc002cb6",
-                "reference": "416f1dd48e49b27562a419b49057c76ecc002cb6",
+                "url": "https://api.github.com/repos/jlem/ArrayOk/zipball/107d1f2e96d4bee83d567077e11aa25e93e85197",
+                "reference": "107d1f2e96d4bee83d567077e11aa25e93e85197",
                 "shasum": ""
             },
             "require": {
@@ -29,7 +29,6 @@
                     "Jlem\\ArrayOk\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "authors": [
                 {
                     "name": "Jon",
@@ -37,7 +36,11 @@
                 }
             ],
             "description": "A simple object wrapper/decorator for arrays",
-            "time": "2014-12-10 21:40:28"
+            "support": {
+                "source": "https://github.com/jlem/ArrayOk/tree/master",
+                "issues": "https://github.com/jlem/ArrayOk/issues"
+            },
+            "time": "2014-12-15 05:44:23"
         }
     ],
     "packages-dev": [],

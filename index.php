@@ -24,8 +24,9 @@ $configs = [
     'defaults' => [
         'bbhd' => [
             'allowed_scoring_types' => ['High Score'],
-        ],
-        '[country:us][game:bbhd]'
+        ]
+    ],
+    'conditions' => [
     ]
 ];
 
@@ -54,14 +55,8 @@ $Context->addFilter('condition', new ConditionFilter($config, $context));
 //$Context->filter('defaults')->by('country.game.user');
 
 $Context->filter('condition')
-        ->when('country', 'ca')
-        ->andWhen('game', 'bbhd')
+        ->when(['country' => 'ca', 'game' => 'bbhd'])
         ->then(['costs_are_editable' => false]);
-
-$Context->filter('condition')
-        ->when('user', 'admin')
-        ->andWhen('game', 'bbhd')
-        ->then(['costs_are_editable' => true]);
 
 //var_dump($Context->get());
 

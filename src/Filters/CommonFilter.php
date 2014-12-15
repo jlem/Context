@@ -8,25 +8,18 @@ class CommonFilter extends Filter
 
     public function __construct(ArrayOk $Config)
     {
-        $this->validateInput($Config);
         $this->Config = $Config;
     }
+    
+    /**
+     * Returns the data found in the config's 'common' array
+     * 
+     * @return array
+     */
     
     public function getData()
     {
         $result = $this->Config['common'];
-        return ($this->validateOutput($result)) ? $result->toArray() : array();
-    }
-    
-    protected function validateOutput($output)
-    {
-        return (is_array($output) || $output instanceof ArrayOk);
-    }
-
-    protected function validateInput(ArrayOk $Config)
-    {
-        if (!$Config->exists('common')) {
-            throw new \InvalidArgumentException('The given configuration data does not contain a key called "common"');
-        }
+        return ($result instanceof ArrayOk) ? $result->toArray() : $result;
     }
 }

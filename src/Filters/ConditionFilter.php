@@ -4,19 +4,23 @@ use Jlem\ArrayOk\ArrayOk;
 
 class ConditionFilter extends Filter
 {
-    protected $Config;
     protected $Context;
     protected $conditions = [];
 
     public function __construct(ArrayOk $Config, ArrayOk $Context)
     {
-        $this->Config = $Config;
+        $this->addConditionsFromConfig($Config);
         $this->Context = $Context;
     }
-    
-    public function when($initialKey, $initialValue)
+
+    protected function addConditionsFromConfig(ArrayOk $Config)
     {
-        return $this->conditions[] = new Condition($initialKey, $initialValue);
+        $Config['conditions']->isEmpty() ?: $this->conditions = $Config['conditions'];
+    }
+    
+    public function when(array $initialConditions)
+    {
+        return $this->conditions[] = new Condition($initialConditions, array());
     }
 
     public function getData()
