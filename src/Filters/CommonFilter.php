@@ -19,7 +19,8 @@ class CommonFilter extends Filter
     
     public function getData()
     {
-        $result = $this->Config['common'];
-        return ($result instanceof ArrayOk) ? $result->toArray() : $result;
+        if ($this->configIsValid('common')) {
+            return $this->Config['common'];    
+        }
     }
 }

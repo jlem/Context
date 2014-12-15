@@ -43,6 +43,35 @@ class Condition
 
 
     /**
+     * Alias of "andWhen()" for more semantic chaining 
+     *
+     * @param string $key
+     * @param string $value
+     * @access public
+     * @return Condition
+    */
+
+    public function addCondition($key, $value)
+    {
+        return $this->andWhen($key, $value);
+    }
+    
+
+    /**
+     * Alias of "when()" for more semantic chaining 
+     *
+     * @param array $conditions
+     * @access public
+     * @return Condition
+    */
+
+    public function replaceConditions(array $conditions)
+    {
+        return $this->when($conditions);
+    }
+
+
+    /**
      * Overrides the intial configuration
      * 
      * @param  array  $configuration
@@ -66,6 +95,51 @@ class Condition
     public function andThen(array $configuration)
     {
         $this->configuration += $configuration;
+        return $this;
+    }
+
+
+    /**
+     * Alias of "andThen()" for more semantic chaining 
+     *
+     * @param array $configuration
+     * @access public
+     * @return Condition
+    */
+
+    public function addConfiguration(array $configuration)
+    {
+        return $this->andThen($configuration);
+    }
+    
+
+    /**
+     * Alias of "then()" for more semantic chaining 
+     *
+     * @param array $configuration
+     * @access public
+     * @return Condition
+    */
+
+    public function replaceConfiguration(array $configuration)
+    {
+        return $this->then($configuration);
+    }
+
+
+    /**
+     * Replaces both the conditions, and the configurations 
+     *
+     * @param array $conditions
+     * @param array $configurations
+     * @access public
+     * @return Condition
+    */
+
+    public function replaceEverything(array $conditions, array $configurations)
+    {
+        $this->when($conditions);
+        $this->then($configurations);
         return $this;
     }
 

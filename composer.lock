@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8141f8f21ce5107ca61d1fcdfe2519a9",
+    "hash": "7eddd75f4571a61e298dcdb2b89bce6a",
     "packages": [
         {
             "name": "jlem/arrayok",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jlem/ArrayOk.git",
-                "reference": "107d1f2e96d4bee83d567077e11aa25e93e85197"
+                "reference": "5febb994c0fa199d3dab12059eedea53ab65da16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jlem/ArrayOk/zipball/107d1f2e96d4bee83d567077e11aa25e93e85197",
-                "reference": "107d1f2e96d4bee83d567077e11aa25e93e85197",
+                "url": "https://api.github.com/repos/jlem/ArrayOk/zipball/5febb994c0fa199d3dab12059eedea53ab65da16",
+                "reference": "5febb994c0fa199d3dab12059eedea53ab65da16",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                 "source": "https://github.com/jlem/ArrayOk/tree/master",
                 "issues": "https://github.com/jlem/ArrayOk/issues"
             },
-            "time": "2014-12-15 05:44:23"
+            "time": "2014-12-15 20:36:11"
         }
     ],
     "packages-dev": [],

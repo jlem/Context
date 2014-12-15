@@ -5,30 +5,38 @@ use Jlem\ArrayOk\ArrayOk;
 class ConditionFilter extends Filter
 {
     protected $Context;
-    protected $conditions = [];
+    protected $Config;
+    protected $conditions;
 
     public function __construct(ArrayOk $Config, ArrayOk $Context)
     {
-        $this->addConditionsFromConfig($Config);
         $this->Context = $Context;
+        $this->Config = $Config;
+        $this->conditions = new ArrayOk;
+        $this->initializeConditions();
     }
 
-    protected function addConditionsFromConfig(ArrayOk $Config)
+    protected function initializeConditions()
     {
-        $Config['conditions']->isEmpty() ?: $this->conditions = $Config['conditions'];
+        if ($this->configIsValid('conditions')) {
+            $this->conditions = $this->Config['conditions'];
+        }
     }
     
-    public function when(array $initialConditions)
+    public function when($name, array $initialConditions)
     {
-        return $this->conditions[] = new Condition($initialConditions, array());
+        return $this->conditions->append(new Condition($initialConditions, array()), $name);
+    }
+
+    public function update($name)
+    {
+        return $this->conditions[$name];
     }
 
     public function getData()
     {
-        $conditions = array_reverse($this->conditions);
-
-        foreach ($conditions as $condition) {
-            if($condition->matchesContext($this->Context)) {
+        foreach ($this->conditions->reverse() as $condition) {
+            if($condition->matchesContext($this->getContextSequence())) {
                 return $condition->getConfiguration();
             }
         }

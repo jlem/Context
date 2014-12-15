@@ -4,11 +4,11 @@ use Jlem\ArrayOk\ArrayOk;
 
 abstract class Filter
 {
-    protected $contextSequence;
+    protected $givenSequence;
 
-    public function by($contextSequence)
+    public function by($givenSequence)
     {
-        $this->contextSequence = $this->normalizeSequence($contextSequence);
+        $this->givenSequence = $this->normalizeSequence($givenSequence);
     }
 
     protected function normalizeSequence($sequence) 
@@ -18,8 +18,21 @@ abstract class Filter
 
     public function getContextSequence()
     {
-        $originalSequence = $this->Context->toArray();
-        return (empty($this->contextSequence)) ? $originalSequence : $this->$contextSequence;
+        if (empty($this->givenSequence)) {
+            return $this->Context; 
+        }
+
+        return new ArrayOk($this->Context->orderByAndGetIntersection($this->givenSequence));
+    }
+
+    protected function makeSequenceIntersection($original, $given)
+    {
+        return array_intersect_key($original, array_flip($given));
+    }
+
+    protected function configIsValid($item)
+    {
+        return ($this->Config->itemIsAOk($item));
     }
 
     abstract public function getData();

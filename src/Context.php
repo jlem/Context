@@ -81,12 +81,26 @@ class Context
     
     protected function mergeFilters()
     {
-        $toMerge = [];
+        $toMerge = array();
 
         foreach ($this->filters as $filter) {
-            $toMerge[] = $filter->getData();
+            $toMerge[] = $this->normalizeData($filter->getData());
         }
 
         return $this->merged = new ArrayOk(call_user_func_array('array_merge', $toMerge));
+    }
+
+
+    protected function normalizeData($data) 
+    {
+        if ($data instanceof ArrayOk) {
+            return $data->toArray();
+        }
+        
+        if (is_array($data)) {
+            return $data;
+        }
+
+        return array();
     }
 }
