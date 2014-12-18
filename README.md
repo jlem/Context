@@ -90,6 +90,8 @@ $config = [
 
 #### 2. Then define the context of the request itself (ORDER MATTERS!!!)
 
+A note about order: the order determines the order in which Context and its filters apply `array_merge`. It configurations override from first to last, and fallback from last to first. That is, given the below in the `defaults` filter, `'Ford'` overrides `'UK'` which overrides `'Admin'`. However, if there is an configuration key defined in `'Admin'` that isn't defined in either `'UK'` or `'Ford'`, then it still gets included in the config array, thanks to `array_merge`
+
 ```php
 $context = [
     'userType' => 'Admin',     // maybe get this from Session
@@ -129,7 +131,7 @@ But wait, how come the UK default for `'show_comment_ip'` trumped the same confi
 
 ## Changing Context Order Globally
 
-Again, changing the order can be done at any point in the request cycle. It can even be done multiple times if needed. You have total flexibility.
+If you want, you can change the context order for all filters, at any time in the request cycle.
 
 #### Option 1: re-defining and resetting.
 ```php
@@ -164,6 +166,19 @@ You can also order by an array of the keys rather than string dot notation
 ```php
 $Context->getContext()->orderBy(['country', 'userType', 'manufacturer']); // Same as dot notation
 ```
+
+## Changing Context Order Per Filter
+
+In addition to chaging the context globally for all filters, you can specify which filter gets the new context. Useful for supplying different matching combinations for `conditions` than for `defaults`
+
+```php
+$Context->getFilter('defaults')->changeContextSequence('manufacturer.userType.country');
+$Context->getFilter('conditions')->changeContextSequence('');
+
+$filtereConfig = $Context->get();
+```
+
+This effectively disables the conditions filter, and allows `defaults` to use a different fallback/override order.
 
 ## Reducing Context
 
