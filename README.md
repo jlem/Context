@@ -27,18 +27,20 @@ if ($country === 'uk') {
 }
 ```
 
-You get the idea. This becomes impossible to manage and maintain very quickly, especially if that logic spreads around different layers of your application - controllers, models, views/templates, javascript...
+You get the idea. This quickly becomes spaghetti code, especially if that logic spreads around different layers of your application - controllers, models, views/templates, javascript. God forbid you have to add a new manufacturer or change the presentation of Honda in Canada...
 
-Maybe you can handle some of them via different URIs that point to different controllers that load different views, but that may not be desirable and could lead to code duplication.
+Maybe you can handle some of these buisiness rules via different URIs that point to different controllers that load different views, but that may not be desirable and could lead to code duplication.
 
 There has to a better way of handling these complex contexts, right?
 
 There is!
 
 
-# Jlem/Context
+# Example
 
-The basic idea behind Jlem/Context: configure your variants with respect to the appropriate contexts
+You'll likely do all of this early in the bootstrapping process, but you can really do it at any time in the request cycle before you need to use the data
+
+#### 1. configure your variants with respect to the appropriate context.
 
 ```php
 $config = [
@@ -82,7 +84,7 @@ $config = [
 ];
 ```
 
-Then lookup the appropriate configuration values based on the provided context of the request itself:
+#### 2. Then define the context of the request itself (ORDER MATTERS!!!)
 
 ```php
 $context = [
@@ -90,4 +92,19 @@ $context = [
   'country' => 'UK'         // maybe from a subdomain or user-agent query as part of the request
   'manufacturer' => 'Ford'  // maybe from a query param, route slug, or what have you
 ];
+```
+
+#### 3. Create the Context and use the desired filters (order doesn't matter here!)
+
+```php
+$Context = new Context($context);
+$Context->addFilter('common', new CommonFilter($config));
+$Context->addFilter('defaults', new DefaultsFilter($config));
+$Context->addFilter('conditions', new ConditionsFilter($config));
+```
+
+#### 4. Retrieve the configuration that represents the request's context
+
+```php
+$filteredConfig = $Context->get();
 ```
