@@ -90,7 +90,7 @@ $config = [
 
 #### 2. Then define the context of the request itself (ORDER MATTERS!!!)
 
-A note about order: the order determines the order in which Context and its filters apply `array_merge`. It configurations override from first to last, and fallback from last to first. That is, given the below in the `defaults` filter, `'Ford'` overrides `'UK'` which overrides `'Admin'`. However, if there is an configuration key defined in `'Admin'` that isn't defined in either `'UK'` or `'Ford'`, then it still gets included in the config array, thanks to `array_merge`
+A note about order: the order determines the order in which Context and its filters apply `array_merge`. It override from first to last, and falls back from last to first. That is, given the below in the `defaults` filter, `'Ford'` overrides `'UK'` which overrides `'Admin'`. However, if there is any configuration key defined in `'Admin'` that isn't defined in either `'UK'` or `'Ford'`, then it still gets included in the config array, thanks to `array_merge`
 
 ```php
 $context = [
