@@ -124,7 +124,7 @@ Based on the context defined in step 2, the above call will return the following
 ]
 ```
 
-But wait, how come the UK default for 'show_comment_ip' trumped the same configuration setting by the 'Admin' default sibling? Because of the order in which the context was defined in step #2. Even though behind the scenes Context used both the 'UK' and 'Admin' defaults, the 'UK' context was set *after* the 'Admin' context, so it takes precedence. We can change this order to get different results, depending on our needs
+But wait, how come the UK default for `'show_comment_ip'` trumped the same configuration setting by the `'Admin'` default sibling? Because of the order in which the context was defined in step #2. Even though behind the scenes Context used both the `'UK'` and `'Admin'` defaults, the `'UK'` context was set *after* the `'Admin'` context, so it takes precedence. We can change this order to get different results, depending on our needs:
 
 
 ## Changing Context Order Globally
