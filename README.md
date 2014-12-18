@@ -32,7 +32,7 @@ You get the idea. This quickly becomes spaghetti code, especially if that logic 
 
 Maybe you can handle some of these buisiness rules via different URIs that point to different controllers that load different views, but that may not be desirable and could lead to code duplication.
 
-There has to a better way of handling these complex contexts, right?
+There has to a better way of handling these business rules and context facets, right?
 
 There is!
 
