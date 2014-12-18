@@ -2,13 +2,7 @@ A very simple library for juggling configuration settings based on a given combi
 
 # Usecase
 
-Suppose you run a car tuner enthusiast community site with independent community sections: Ford, Honda, and Subaru.
-
-You also know that your traffic comes primarily from the US, Canada, and the UK, so while you don't need multilingual support, things like time and date formats can vary little bit.
-
-And being a community site, you obviously have different user groups (members, moderators, admins etc).
-
-Now suppose you have a page that shows information about various car models or parts from different manufacturers (with comments), but *depending on which manufacturer it is, which country you're from, and which user group you are* the format, layout, and information on this page can vary a little bit:
+Suppose you have a page that shows information about various car models or parts from different manufacturers (with comments), but *depending on which manufacturer it is, which country you're from, and which user group you are* the format, layout, and information on this page can vary a little bit:
 
 * Ford has a section about tuner trucks that Honda doesn't have
 * Except Ford UK doesn't show this because tuner trucks aren't as popular in the UK
