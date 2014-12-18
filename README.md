@@ -8,6 +8,7 @@ Suppose you have a page that shows information about various car models or parts
 * Except Ford UK doesn't show this because tuner trucks aren't as popular in the UK
 * All manufacturer pages in the UK show dates formatted as Day Month, Year
 * Admins can see all comments (including pending/soft-deleted) as well IP addresses associated with comments
+* However, let's pretend UK has privacy laws that prohibits displaying IP addresses to non-employees/owners
 * Moderators can see all public comments as well as see/approve pending comments
 * Regular users can only see publically visible comments
 
@@ -17,11 +18,11 @@ If you didn't care about maintainability, you may be tempted to do something lik
 
 ```php
 if ($country === 'uk') {
-      if ($manufacturer == 'ford') {
-         ...
-      } else {
-         ...
-      }
+    if ($manufacturer == 'ford') {
+        ...
+    } else {
+        ...
+    }
 } else if (....) {
   ...
 }
@@ -36,7 +37,9 @@ There has to a better way of handling these complex contexts, right?
 There is!
 
 
-# Example
+# Examples
+
+## Basic Example
 
 You'll likely do all of this early in the bootstrapping process, but you can really do it at any time in the request cycle before you need to use the data
 
@@ -45,42 +48,43 @@ You'll likely do all of this early in the bootstrapping process, but you can rea
 ```php
 $config = [
 
-  // 'common' is the fallback default value for all variants.
-  // Useful for defining commonalities shared by all contexts
+    // 'common' is the fallback default value for all variants.
+    // Useful for defining commonalities shared by all contexts
   
-  'common' => [
-    'show_tuner_truck_module' => true,
-    'date_format' => 'M j, Y'
-    'comment_query_criteria' => 'Acme\Comment\Criteria\Member' // Give this to a repository
-    'show_comment_ip' => false
-  ],
+    'common' => [
+        'show_tuner_truck_module' => true,
+        'date_format' => 'M j, Y'
+        'comment_query_criteria' => 'Acme\Comment\Criteria\Member' // Give this to a repository
+        'show_comment_ip' => false
+    ],
   
-  // 'defaults' are the default configurations for each specific context value
-  // These override 'common' configs, if present
+    // 'defaults' are the default configurations for each specific context value
+    // These override 'common' configs, if present
   
-  'defaults' => [
-    'UK' => [
-      'date_format' => 'j M, Y'
-    ],
-    'Honda' => [
-      'show_tuner_truck_module' => false
-    ],
-    'Admin' => [
-      'comment_query_criteria' => 'Acme\Comment\Criteria\Admin' // Give this to a repository
-      'show_comment_ip' => true
-    ],
-    'Moderator' => [
-      'comment_query_criteria' => 'Acme\Comment\Criteria\Moderator' // Give this to a repository
-    ]
+    'defaults' => [
+        'UK' => [
+            'date_format' => 'j M, Y'
+            'show_comment_ip' => false
+        ],
+        'Honda' => [
+            'show_tuner_truck_module' => false
+        ],
+        'Admin' => [
+            'comment_query_criteria' => 'Acme\Comment\Criteria\Admin' // Give this to a repository
+            'show_comment_ip' => true
+        ],
+        'Moderator' => [
+            'comment_query_criteria' => 'Acme\Comment\Criteria\Moderator' // Give this to a repository
+        ]
     
-  // 'conditions' represent configurations for arbitrary *combinations* of contexts
-  // These override both 'defaults' and 'common', if the context of the request matches
+    // 'conditions' represent configurations for arbitrary *combinations* of contexts
+    // These override both 'defaults' and 'common', if the context of the request matches
   
-  ],
-  'conditions' => [
-    'ford_uk' => new Condition(['country' => 'UK', 'manufacturer' => 'Ford'], 
-                               ['show_tuner_truck_module' => false])
-  ]
+    ],
+    'conditions' => [
+        'ford_uk' => new Condition(['country' => 'UK', 'manufacturer' => 'Ford'], 
+                                   ['show_tuner_truck_module' => false])
+    ]
 ];
 ```
 
@@ -88,9 +92,9 @@ $config = [
 
 ```php
 $context = [
-  'userType' => 'Admin'     // maybe get this from Session
-  'country' => 'UK'         // maybe from a subdomain or user-agent query as part of the request
-  'manufacturer' => 'Ford'  // maybe from a query param, route slug, or what have you
+    'userType' => 'Admin',     // maybe get this from Session
+    'country' => 'UK',         // maybe from a subdomain or user-agent query as part of the request
+    'manufacturer' => 'Ford'   // maybe from a query param, route slug, or what have you
 ];
 ```
 
@@ -107,4 +111,56 @@ $Context->addFilter('conditions', new ConditionsFilter($config));
 
 ```php
 $filteredConfig = $Context->get();
+```
+
+Based on the context defined in step 2, the above call will return the following array:
+
+```php
+[
+    'show_tuner_truck_module' => false,     // Determined by the 'ford_uk' condition
+    'date_format' => 'j M, Y'               // Determined by the 'UK' default
+    'comment_query_criteria' => 'Acme\Comment\Criteria\Admin' // Determined by the 'Admin' default
+    'show_comment_ip' => false               // Determined by the 'UK' default
+]
+```
+
+But wait, how come the UK default for 'show_comment_ip' trumped the same configuration setting by the 'Admin' default sibling? Because of the order in which the context was defined in step #2. Even though behind the scenes Context used both the 'UK' and 'Admin' defaults, the 'UK' context was set *after* the 'Admin' context, so it takes precedence. We can change this order to get different results, depending on our needs
+
+
+## Changing Context Order Globally
+
+Again, changing the order can be done at any point in the request cycle. It can even be done multiple times if needed. You have total flexibility.
+
+#### Option 1: re-defining and resetting.
+```php
+$context = [
+    'country' => 'UK',         // Notice that UK comes before Admin now
+    'userType' => 'Admin',
+    'manufacturer' => 'Ford'
+];
+
+
+$Context->setContext($context);
+$filteredConfig = $Context->get();
+```
+
+Should now return
+```php
+[
+    'show_tuner_truck_module' => false,     // Determined by the 'ford_uk' condition
+    'date_format' => 'j M, Y'               // Determined by the 'UK' default
+    'comment_query_criteria' => 'Acme\Comment\Criteria\Admin' // Determined by the 'Admin' default
+    'show_comment_ip' => true               // Determined by the 'Admin' default
+]
+```
+
+#### Option 2: changing the order on the fly
+```php
+$Context->getContext()->orderBy('country.userType.manufacturer');
+```
+Note here that you're re-ordering by the context keys to switch the values around, rather than defining a whole new context array.
+
+You can also order by an array of the keys rather than string dot notation
+```php
+$Context->getContext()->orderBy(['country', 'userType', 'manufacturer']); // Same as dot notation
 ```
