@@ -158,9 +158,46 @@ Should now return
 ```php
 $Context->getContext()->orderBy('country.userType.manufacturer');
 ```
-Note here that you're re-ordering by the context keys to switch the values around, rather than defining a whole new context array.
+Note here that you're re-ordering by the context keys to switch the values around, rather than defining a whole new context array. The reason for this is so that you can re-order by the underlying contexts, rather than having to worry about the values of those contexts.
 
 You can also order by an array of the keys rather than string dot notation
 ```php
 $Context->getContext()->orderBy(['country', 'userType', 'manufacturer']); // Same as dot notation
 ```
+
+## Reducing Context
+
+Even if your initial context contained three facets, you don't necessarily need to utilize all three when re-ordering.
+
+```php
+$Conext->getContext()->orderByAndGetIntersection(['country', 'manufacturer']);
+$Conext->getContext()->orderByAndGetIntersection('country.manufacturer'); // dot notation is valid as well
+```
+By doing the above, you've effectively dropped 'userType' out of the context scope entirely, and then re-ordered accordingly, meaning that no matter what the 'userType' was set to, it will never match against any defaults or conditions that reference it.
+
+This of course can also be accomplished by resetting with a new context entirely:
+
+```php
+$context = [
+    'country' => 'UK',
+    'manufacturer' => 'Ford'
+];
+
+
+$Context->setContext($context);
+$filteredConfig = $Context->get();
+```
+
+You can also choose to re-order only a subset of facets *without* dropping any of them, allowing you to re-order only the facets you really care about for the given request.
+
+```php
+$Conext->getContext()->orderBy('country.manufacturer');
+```
+
+This will simply leave any unspecified facets in their original order, at the *end* of the newly ordered array. So in this above situation, the context would look like this, internally:
+```php
+[
+    'country' => 'UK',
+    'manufacturer' => 'Ford',
+    'userType' => 'Admin' // userType wasn't specified, so it appears at the end
+];
