@@ -55,7 +55,7 @@ $config = [
   'common' => [
     'show_tuner_truck_module' => true,
     'date_format' => 'M j, Y'
-    'comment_query_repository' => 'Acme\Comment\CommentRepository'
+    'comment_query_criteria' => new Acme\Comment\Criteria\Member // Give this to a repository
     'show_comment_ip' => false
   ],
   
@@ -70,11 +70,11 @@ $config = [
       'show_tuner_truck_module' => false
     ],
     'Admin' => [
-      'comment_query_repository' => 'Acme\Comment\AdminCommentRepository'
+      'comment_query_criteria' => new Acme\Comment\Criteria\Admin // Give this to a repository
       'show_comment_ip' => true
     ],
     'Moderator' => [
-      'comment_query_repository' => 'Acme\Comment\ModeratorCommentRepository'
+      'comment_query_criteria' => new Acme\Comment\Criteria\Moderator // Give this to a repository
     ]
     
   // 'conditions' represent configurations for arbitrary *combinations* of contexts
