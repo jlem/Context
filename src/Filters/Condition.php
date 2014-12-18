@@ -4,14 +4,15 @@ use Jlem\ArrayOk\ArrayOk;
 
 class Condition
 {
-    protected $conditions;
-    protected $configuration;
+    protected $conditions = array();
+    protected $configurations = array();
 
-    public function __construct(array $initialConditions, array $initialConfiguration)
+    public function __construct(array $initialConditions, array $initialConfigurations)
     {
-        $this->when($initialConditions);
-        $this->then($initialConfiguration);
+        $this->setConditions($initialConditions);
+        $this->setConfigurations($initialConfigurations);
     }
+
 
     /**
      * Overrides the intial conditions
@@ -20,7 +21,7 @@ class Condition
      * @return Condition
      */
     
-    public function when(array $conditions)
+    public function setConditions(array $conditions)
     {
         $this->conditions = $conditions;
         return $this;
@@ -35,7 +36,7 @@ class Condition
      * @return Condition
      */
     
-    public function andWhen($key, $value)
+    public function addCondition($key, $value)
     {
         $this->conditions[$key] = $value;
         return $this;
@@ -43,31 +44,15 @@ class Condition
 
 
     /**
-     * Alias of "andWhen()" for more semantic chaining 
+     * Returns the conditions array 
      *
-     * @param string $key
-     * @param string $value
      * @access public
-     * @return Condition
+     * @return array
     */
 
-    public function addCondition($key, $value)
+    public function getConditions()
     {
-        return $this->andWhen($key, $value);
-    }
-    
-
-    /**
-     * Alias of "when()" for more semantic chaining 
-     *
-     * @param array $conditions
-     * @access public
-     * @return Condition
-    */
-
-    public function replaceConditions(array $conditions)
-    {
-        return $this->when($conditions);
+        return $this->conditions;
     }
 
 
@@ -78,9 +63,9 @@ class Condition
      * @return Condition
      */
     
-    public function then(array $configuration)
+    public function setConfigurations(array $configuration)
     {
-        $this->configuration = $configuration;
+        $this->configurations = $configuration;
         return $this;
     }
 
@@ -92,43 +77,27 @@ class Condition
      * @return Condition
      */
     
-    public function andThen(array $configuration)
+    public function addConfiguration(array $configuration)
     {
-        $this->configuration += $configuration;
+        $this->configurations += $configuration;
         return $this;
     }
 
 
     /**
-     * Alias of "andThen()" for more semantic chaining 
-     *
-     * @param array $configuration
-     * @access public
-     * @return Condition
-    */
+     * Returns the configuration data 
+     * 
+     * @return array
+     */
 
-    public function addConfiguration(array $configuration)
+    public function getConfiguration()
     {
-        return $this->andThen($configuration);
-    }
-    
-
-    /**
-     * Alias of "then()" for more semantic chaining 
-     *
-     * @param array $configuration
-     * @access public
-     * @return Condition
-    */
-
-    public function replaceConfiguration(array $configuration)
-    {
-        return $this->then($configuration);
+        return $this->configurations;
     }
 
 
     /**
-     * Replaces both the conditions, and the configurations 
+     * sets both the conditions, and the configurations 
      *
      * @param array $conditions
      * @param array $configurations
@@ -136,10 +105,10 @@ class Condition
      * @return Condition
     */
 
-    public function replaceEverything(array $conditions, array $configurations)
+    public function setEverything(array $conditions, array $configurations)
     {
-        $this->when($conditions);
-        $this->then($configurations);
+        $this->setConditions($conditions);
+        $this->setConfigurations($configurations);
         return $this;
     }
 
@@ -153,6 +122,10 @@ class Condition
     
     public function matchesContext(ArrayOk $Context)
     {
+        if (empty($this->conditions)) {
+            return false;
+        }
+
         foreach ($this->conditions as $key => $value) {
 
             // Bug out if the key isn't even set
@@ -167,16 +140,5 @@ class Condition
         }
 
         return true;
-    }
-
-
-    /**
-     * Returns the configuration data 
-     * 
-     * @return array
-     */
-    public function getConfiguration()
-    {
-        return $this->configuration;
     }
 }

@@ -4,14 +4,11 @@ use Jlem\ArrayOk\ArrayOk;
 
 class DefaultsFilter extends Filter
 {
-    protected $Config;
-    protected $Context;
-
-    public function __construct(ArrayOk $Config, ArrayOk $Context)
-    {
-        $this->Config = $Config;
-        $this->Context = $Context;
-    }
+    /**
+     * Returns the data found in the config's 'common' array
+     * 
+     * @return ArrayOk
+     */
     
     public function getData()
     {
@@ -19,6 +16,16 @@ class DefaultsFilter extends Filter
             return $this->mergeDefaults($this->getContextSequence(), $this->Config['defaults']);
         }
     }
+
+
+    /**
+     * Merges all of the arrays found in the defaults configuration in the order defined by the context 
+     *
+     * @param ArrayOk $sequence
+     * @param ArrayOk $config
+     * @access protected
+     * @return array
+    */
 
     protected function mergeDefaults(ArrayOk $sequence, ArrayOk $config)
     {

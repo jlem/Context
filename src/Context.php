@@ -5,7 +5,13 @@ use Jlem\ArrayOk\ArrayOk;
 
 class Context
 {
+    protected $Context;
     protected $filters = [];
+
+    public function __construct(ArrayOk $Context)
+    {
+        $this->setContext($Context);
+    }
 
     /**
      * Adds a new filter to the filter stack
@@ -28,7 +34,7 @@ class Context
      * @return Filter
      */
     
-    public function filter($name)
+    public function getFilter($name)
     {
         return $this->filters[$name];
     }
@@ -58,18 +64,30 @@ class Context
 	}
 
 
-
     /**
-     * Changes the context values to be processed when merging 
+     * Sets the context data 
      *
-     * @param ContextSet $Context
+     * @param ArrayOk $Context
      * @access public
      * @return void
     */
 
-    public function changeContext(ContextSet $ContextSet)
+    public function setContext(ArrayOk $Context)
     {
-        $this->Merger->changeContext($ContextSet);
+        $this->Context = $Context;
+    }
+
+
+    /**
+     * Gets the context data 
+     *
+     * @access public
+     * @return ArrayOk
+    */
+
+    public function getContext()
+    {
+        return $this->Context;
     }
 
 
@@ -84,12 +102,21 @@ class Context
         $toMerge = array();
 
         foreach ($this->filters as $filter) {
+            $filter->applyContext($this->Context);
             $toMerge[] = $this->normalizeData($filter->getData());
         }
 
         return $this->merged = new ArrayOk(call_user_func_array('array_merge', $toMerge));
     }
 
+
+    /**
+     * Normalizes the data returned from the filters as a basic array 
+     *
+     * @param mixed $data
+     * @access protected
+     * @return array
+    */
 
     protected function normalizeData($data) 
     {

@@ -16,12 +16,29 @@ use Jlem\ArrayOk\ArrayOk;
 
 
 $configs = [
+    'common' => [
+        'what' => 'now',
+    ],
+    'defaults' => [
+        'bbhd' => [
+            'what' => 'then',
+            'hey' => 'ya'
+        ],
+        'ca' => [
+            'what' => 'are you doing?',
+            'hey' => 'there'
+        ],
+        'admin' => [
+            'yolo' => 'swaggins'
+        ]
+    ],
+    'conditions' => [
+    ]
 ];
 
 $context = [
-	'country' => 'ca',
-	'game' => 'bbhd',
-	'user' => 'operator'
+	'country' => 'us',
+	'user' => 'admin'
 ];
 
 
@@ -29,11 +46,11 @@ $context = new ArrayOk($context);
 $config = new ArrayOk($configs);
 
 
-$Context = new Context();
+$Context = new Context($context);
 $Context->addFilter('common', new CommonFilter($config));
-$Context->addFilter('defaults', new DefaultsFilter($config, $context));
-$Context->addFilter('conditions', new ConditionFilter($config, $context));
-
+$Context->addFilter('defaults', new DefaultsFilter($config));
+$Context->addFilter('conditions', new ConditionFilter($config));
+$Context->getContext()->append('bbs', 'game');
 // In request process
 $results = $Context->get();
 
