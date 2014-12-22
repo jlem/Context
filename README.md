@@ -160,7 +160,11 @@ In addition to chaging the context globally for all filters, you can specify cer
 
 ```php
 $Context->getFilter('defaults')->reorderContext('manufacturer.user.country');
+$Context->reorderFilterContext('defaults', 'manufacturer.user.country'); // Alternative
+
 $Context->getFilter('conditions')->reorderContext('country.manufacturer.user');
+$Context->reorderFilterContext('conditions', 'country.manufacturer.user'); // Alternative
+
 ```
 
 ## Reducing Context
