@@ -6,12 +6,62 @@ use Jlem\ArrayOk\ArrayOk;
 class Context
 {
     protected $Context;
-    protected $filters = [];
+    protected $contextOrder = null;
+    protected $clipContext = true;
 
-    public function __construct(ArrayOk $Context)
+    protected $filters = [];
+    protected $disabledFilters = [];
+    protected $contextIsDisabled = false;
+
+    public function __construct($context)
     {
-        $this->setContext($Context);
+        $this->setContext($context);
     }
+
+
+
+    /**
+     * Sets the context data 
+     *
+     * @param ArrayOk $Context
+     * @access public
+     * @return void
+    */
+
+    public function setContext($context)
+    {
+        $this->Context = $context instanceof ArrayOk ? $context : new ArrayOk($context);
+    }
+
+
+
+    /**
+     * Disables the use of context data by restricting filter application to just the 'common' filter 
+     *
+     * @access public
+     * @return void
+    */
+
+    public function disableContext()
+    {
+        $this->contextIsDisabled = true;
+    }
+
+
+
+    /**
+     * Re-enables the use of contexts 
+     *
+     * @access public
+     * @return void
+    */
+
+    public function enableContext()
+    {
+        $this->contextIsDisabled = false;
+    }
+
+
 
     /**
      * Adds a new filter to the filter stack
@@ -27,6 +77,7 @@ class Context
     }
 
 
+
     /**
      * Returns a filter by name
      * 
@@ -38,6 +89,39 @@ class Context
     {
         return $this->filters[$name];
     }
+
+
+
+    /**
+     * Disables the use of a filter 
+     *
+     * @param string $name
+     * @access public
+     * @return void
+    */
+
+    public function disableFilter($name)
+    {
+        $this->disabledFilters[$name] = null;
+    }
+
+
+
+    /**
+     * Re-enables the use of a filter 
+     *
+     * @param string $name
+     * @access public
+     * @return void
+    */
+
+    public function enableFilter($name)
+    {
+        if (isset($this->disabledFilters[$name])) {
+            unset($this->disabledFilters[$name]);
+        }
+    }
+
 
 
     /**
@@ -64,19 +148,6 @@ class Context
 	}
 
 
-    /**
-     * Sets the context data 
-     *
-     * @param ArrayOk $Context
-     * @access public
-     * @return void
-    */
-
-    public function setContext(ArrayOk $Context)
-    {
-        $this->Context = $Context;
-    }
-
 
     /**
      * Gets the context data 
@@ -91,14 +162,38 @@ class Context
     }
 
 
+
+    /**
+     * Globally applies a new context order to all filters
+     *
+     * @param mixed array|string $contextOrder
+     * @param boolean $clip intersects the given order with the context to reduce keys
+     * @param boolean $resetNewContextAfterGet tells the filters to reset the new context after get
+     * @access protected
+     * @return void
+    */
+
     public function reorderContext($newOrder, $clip = true)
     {
-        $this->Context->orderBy($newOrder);
-
-        if ($clip) {
-            $this->Context = $this->Context->intersectKeys($newOrder);
-        }
+        $this->contextOrder = $newOrder;
+        $this->clipContext = $clip;
     }
+
+
+
+    /**
+     * Reverts context order back to original settings
+     *
+     * @access public
+     * @return void
+    */
+
+    public function resetContextOrder()
+    {
+        $this->contextOrder = null;
+        $this->clipContext = true;
+    }
+
 
 
     /**
@@ -111,13 +206,19 @@ class Context
     {
         $toMerge = array();
 
-        foreach ($this->filters as $filter) {
-            $filter->applyContext($this->Context);
+        foreach ($this->getActiveFilters() as $filterName => $filter) {
+            
+            // Apply the current context and global context order to each filter
+            $filter->applyContext($this->Context, $this->contextOrder, $this->clipContext);
+
+            // Build an array of data from each filter that will eventually be merged
             $toMerge[] = $this->normalizeData($filter->getData());
         }
 
+        // Merge the filter data
         return $this->merged = new ArrayOk(call_user_func_array('array_merge', $toMerge));
     }
+
 
 
     /**
@@ -139,5 +240,22 @@ class Context
         }
 
         return array();
+    }
+
+
+    /**
+     * Returns an array of only the active filters 
+     *
+     * @access protected
+     * @return array
+    */
+
+    protected function getActiveFilters()
+    {
+        if ($this->contextIsDisabled) {
+            return array('common' => $this->filters['common']);
+        }
+
+        return array_diff_key($this->filters, $this->disabledFilters);
     }
 }

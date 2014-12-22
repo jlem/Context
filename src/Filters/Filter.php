@@ -4,28 +4,48 @@ use Jlem\ArrayOk\ArrayOk;
 
 abstract class Filter
 {
-    protected $givenSequence;
+    protected $contextOrder = null;
+    protected $clipContext = true;
+    protected $hasOverride = false;
     protected $Context;
     protected $Config;
 
-    public function __construct(ArrayOk $Config)
+    public function __construct($config)
     {
-        $this->Config = $Config;
+        $this->setConfig($config);
     }
+
+
+    /**
+     * Sets the configuration data for the filter
+     *
+     * @param mixed array|ArrayOk $config
+     * @access public
+     * @return void
+    */
+
+    public function setConfig($config)
+    {
+        $this->Config = $config instanceof ArrayOk ? $config : new ArrayOk($config);
+    }
+
 
 
     /**
      * Defines a new context sequence for the filter to use when retrieving its data 
      *
-     * @param mixed array|string $givenSequence
+     * @param mixed array|string $contextOrder
      * @access protected
      * @return void
     */
 
-    public function changeContextSequence($givenSequence)
+    public function reorderContext($newOrder, $clip = true)
     {
-        $this->givenSequence = $this->normalizeSequence($givenSequence);
+        $this->contextOrder = $newOrder;
+        $this->clipContext = $clip;
+        $this->hasOverride = true;
     }
+
 
 
     /**
@@ -37,13 +57,37 @@ abstract class Filter
 
     public function getContextSequence()
     {
-        if (empty($this->givenSequence)) {
+        if (empty($this->contextOrder)) {
             return $this->Context; 
         }
 
-        return new ArrayOk($this->Context->orderByAndGetIntersection($this->givenSequence));
+        $ContextOverride = clone $this->Context;
+        $ContextOverride->orderBy($this->contextOrder);
+
+        if ($this->clipContext) {
+            $ContextOverride = $ContextOverride->intersectKeys($this->contextOrder);
+        }
+
+        return $ContextOverride;
     }
     
+
+
+    /**
+     * Reverts context order back to original settings
+     *
+     * @access public
+     * @return void
+    */
+
+    public function resetContextOrder()
+    {
+        $this->contextOrder = null;
+        $this->clipContext = true;
+        $this->hasOverride = false;
+    }
+    
+
 
     /**
      * Applies the context data to the filter 
@@ -53,24 +97,19 @@ abstract class Filter
      * @return void
     */
 
-    public function applyContext(ArrayOk $Context)
+    public function applyContext(ArrayOk $Context, $contextOrder, $clipContext)
     {
-        $this->Context = $Context;
+        $this->Context = clone $Context;
+
+        if (!$this->hasOverride) {
+            $this->reorderContext($contextOrder, $clipContext);
+        }
+
+        if (empty($contextOrder)) {
+            $this->resetContextOrder();
+        }
     }
 
-
-    /**
-     * Converts a dot separated string to an array, or passes an array through 
-     *
-     * @param mixed array|string $sequence
-     * @access protected
-     * @return array
-    */
-
-    protected function normalizeSequence($sequence) 
-    {
-        return is_array($sequence) ? $sequence : explode('.', $sequence);
-    }
 
 
     /**
@@ -85,6 +124,7 @@ abstract class Filter
     {
         return ($this->Config->itemIsAOk($item));
     }
+
 
 
     /**

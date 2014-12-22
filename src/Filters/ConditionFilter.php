@@ -6,9 +6,9 @@ class ConditionFilter extends Filter
 {
     protected $conditions;
 
-    public function __construct(ArrayOk $Config)
+    public function __construct($config)
     {
-        parent::__construct($Config);
+        parent::__construct($config);
         $this->initializeConditions();
     }
 

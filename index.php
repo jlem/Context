@@ -15,46 +15,59 @@ use Jlem\Context\Context;
 use Jlem\ArrayOk\ArrayOk;
 
 
-$configs = [
+$config = [
+
+    // 'common' is the fallback default value for all variants.
+    // Useful for defining commonalities shared by all contexts
+
     'common' => [
-        'what' => 'now',
+        'show_tuner_truck_module' => true,
+        'date_format' => 'M j, Y',
+        'comment_query_criteria' => 'Acme\Comment\Criteria\Member', // Give this to a repository
+        'show_comment_ip' => false
     ],
+
+    // 'defaults' are the default configurations for each specific context value
+    // These override 'common' configs, if present
+
     'defaults' => [
-        'bbhd' => [
-            'what' => 'then',
-            'hey' => 'ya'
+        'UK' => [
+            'date_format' => 'j M, Y',
+            'show_comment_ip' => false
         ],
-        'ca' => [
-            'what' => 'are you doing?',
-            'hey' => 'there'
+        'Honda' => [
+            'show_tuner_truck_module' => false
         ],
-        'admin' => [
-            'yolo' => 'swaggins',
-            'hey' => 'admin'
+        'Admin' => [
+            'comment_query_criteria' => 'Acme\Comment\Criteria\Admin', // Give this to a repository
+            'show_comment_ip' => true
+        ],
+        'Moderator' => [
+            'comment_query_criteria' => 'Acme\Comment\Criteria\Moderator' // Give this to a repository
         ]
+
+    // 'conditions' represent configurations for arbitrary *combinations* of contexts
+    // These override both 'defaults' and 'common', if the context of the request matches
+
     ],
     'conditions' => [
-        'ca_bbhd' => new Condition(['country' => 'ca', 'game' => 'bbhd'], ['nope' => 'im out'])
+        'ford_uk' => new Condition(['country' => 'UK', 'manufacturer' => 'Ford'], 
+                                   ['show_tuner_truck_module' => false])
     ]
 ];
 
 $context = [
-	'country' => 'ca',
-    'game' => 'bbhd',
-	'user' => 'admin'
+    'userType' => 'Admin',     // maybe get this from Session
+    'country' => 'UK',         // maybe from a subdomain or user-agent query as part of the request
+    'manufacturer' => 'Ford'   // maybe from a query param, route slug, or what have you
 ];
 
 
-$context = new ArrayOk($context);
-$config = new ArrayOk($configs);
-
-
 $Context = new Context($context);
+    
 $Context->addFilter('common', new CommonFilter($config));
 $Context->addFilter('defaults', new DefaultsFilter($config));
 $Context->addFilter('conditions', new ConditionFilter($config));
-$Context->reorderContext('user.country', false);
-$Context->reorderContext('game');
 
 // In request process
 $results = $Context->get();
