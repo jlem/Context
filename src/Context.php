@@ -182,6 +182,23 @@ class Context
 
 
     /**
+     * Reorders the context of a specific filter 
+     *
+     * @param string $filterName
+     * @param mixed array|string $newOrder
+     * @param boolean $clip
+     * @access public
+     * @return void
+    */
+
+    public function reorderFilterContext($filterName, $newOrder, $clip = true)
+    {
+        $this->getFilter($filterName)->reorderContext($newOrder, $clip);
+    }
+
+
+
+    /**
      * Reverts context order back to original settings
      *
      * @access public
