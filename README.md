@@ -243,3 +243,24 @@ To re-enable it:
 ```php
 $Context->enableContext();
 ```
+
+# Filter Documentation
+
+## Condition Filter
+
+The condition filter allows you to modify both its conditions, and those conditions themselves, on the fly.
+
+#### Adding a New Condition
+
+You can add new conditions on the fly using `$ConditionFilter->addCondition(string $name, Condition $condition)`:
+
+```php
+$ConditionFilter->addCondition('us_admin', new Condition(['country' => 'US', 'user' => 'Admin'], ['some' => 'config']));
+```
+
+The first argument is an arbitrary name to identify the condition. This name is not used for anything other than lookup if you need it. The second argument is a `Condition` object.
+
+A `Condition` itself takes two arrays as arguments: the first is the condition under which the context data should match, and the second is the new configuration data to use should the condition match the context. This new configuration data obeys the same rules as all of the other configuration data: if it's new/unique it gets appended to the merged master. If it contains the same config key as an existing configuration item, it overrides it (if the condition matches, of course!)
+
+Conditions do not presently cascade: only the last defined Condition that matches the given context, will be used.
+
