@@ -53,8 +53,8 @@ $config = [
   
     'common' => [
         'show_tuner_truck_module' => true,
-        'date_format' => 'M j, Y'
-        'comment_query_criteria' => 'Acme\Comment\Criteria\Member' // Give this to a repository
+        'date_format' => 'M j, Y',
+        'comment_query_criteria' => 'Acme\Comment\Criteria\Member', // Give this to a repository
         'show_comment_ip' => false
     ],
   
@@ -63,14 +63,14 @@ $config = [
   
     'defaults' => [
         'UK' => [
-            'date_format' => 'j M, Y'
+            'date_format' => 'j M, Y',
             'show_comment_ip' => false
         ],
         'Honda' => [
             'show_tuner_truck_module' => false
         ],
         'Admin' => [
-            'comment_query_criteria' => 'Acme\Comment\Criteria\Admin' // Give this to a repository
+            'comment_query_criteria' => 'Acme\Comment\Criteria\Admin', // Give this to a repository
             'show_comment_ip' => true
         ],
         'Moderator' => [
@@ -94,13 +94,13 @@ A note about order: the order determines the order in which Context and its filt
 
 ```php
 $context = [
-    'userType' => 'Admin',     // maybe get this from Session
-    'country' => 'UK',         // maybe from a subdomain or user-agent query as part of the request
-    'manufacturer' => 'Ford'   // maybe from a query param, route slug, or what have you
+    'user' => 'Admin',          // maybe get this from Session
+    'country' => 'UK',          // maybe from a subdomain or user-agent query as part of the request
+    'manufacturer' => 'Ford'    // maybe from a query param, route slug, or what have you
 ];
 ```
 
-#### 3. Create the Context and use the desired filters (order doesn't matter here!)
+#### 3. Create the Context and use the desired filters (ORDER MATTERS!!!)
 
 ```php
 $Context = new Context($context);
@@ -137,7 +137,7 @@ If you want, you can change the context order for all filters, at any time in th
 ```php
 $context = [
     'country' => 'UK',         // Notice that UK comes before Admin now
-    'userType' => 'Admin',
+    'user' => 'Admin',
     'manufacturer' => 'Ford'
 ];
 
@@ -158,61 +158,69 @@ Should now return
 
 #### Option 2: changing the order on the fly
 ```php
-$Context->getContext()->orderBy('country.userType.manufacturer');
+$Context->reorderContext('country.user.manufacturer');
+$Context->reorderContext(['country', 'user', 'manufacturer']); // optional array syntax
 ```
-Note here that you're re-ordering by the context keys to switch the values around, rather than defining a whole new context array. The reason for this is so that you can re-order by the underlying contexts, rather than having to worry about the values of those contexts.
+Note here that you're re-ordering by the context keys, rather than defining a whole new context array. The reason for this is so that you can re-order by the underlying contexts, rather than having to worry about the values of those contexts.
 
-You can also order by an array of the keys rather than string dot notation
-```php
-$Context->getContext()->orderBy(['country', 'userType', 'manufacturer']); // Same as dot notation
-```
 
 ## Changing Context Order Per Filter
 
-In addition to chaging the context globally for all filters, you can specify which filter gets the new context. Useful for supplying different matching combinations for `conditions` than for `defaults`
+In addition to chaging the context globally for all filters, you can specify certain context orders for certain filters. These will always override any global context reordering.
 
 ```php
-$Context->getFilter('defaults')->changeContextSequence('manufacturer.userType.country');
-$Context->getFilter('conditions')->changeContextSequence('');
+$Context->getFilter('defaults')->reorderContext('manufacturer.user.country');
+$Context->getFilter('conditions')->reorderContext('country.manufacturer.user');
 
-$filtereConfig = $Context->get();
+$filteredConfig = $Context->get();
 ```
-
-This effectively disables the conditions filter, and allows `defaults` to use a different fallback/override order.
 
 ## Reducing Context
 
 Even if your initial context contained three facets, you don't necessarily need to utilize all three when re-ordering.
 
 ```php
-$Conext->getContext()->orderByAndGetIntersection(['country', 'manufacturer']);
-$Conext->getContext()->orderByAndGetIntersection('country.manufacturer'); // dot notation is valid as well
-```
-By doing the above, you've effectively dropped 'userType' out of the context scope entirely, and then re-ordered accordingly, meaning that no matter what the 'userType' was set to, it will never match against any defaults or conditions that reference it.
+$Conext->reorderContext('country.manufacturer');
 
-This of course can also be accomplished by resetting with a new context entirely:
-
-```php
-$context = [
+// Context has become:
+[
     'country' => 'UK',
     'manufacturer' => 'Ford'
 ];
-
-
-$Context->setContext($context);
-$filteredConfig = $Context->get();
 ```
 
-You can also choose to re-order only a subset of facets *without* dropping any of them, allowing you to re-order only the facets you really care about for the given request.
+By doing the above, you've effectively dropped `'user'` out of the context scope entirely, and then re-ordered accordingly, meaning that the `'Admin'` default settings are ignored for this request.
+
+If you want to reorder just one or two facets, pass in `false` as the second parameter to keep all context facets, but place the specified ones at the beginning:
 
 ```php
-$Conext->getContext()->orderBy('country.manufacturer');
-```
+$Conext->reorderContext('country.manufacturer', false);
 
-This will simply leave any unspecified facets in their original order, at the *end* of the newly ordered array. So in this above situation, the context would look like this, internally:
-```php
+// Context has become:
 [
     'country' => 'UK',
     'manufacturer' => 'Ford',
-    'userType' => 'Admin' // userType wasn't specified, so it appears at the end
+    'user' => 'Admin'  // Was not specified, so it stays on the end
 ];
+```
+
+## Resetting Context
+
+**NOTE** When reorders are supplied (as opposed to full resets), they mutate the state of how the Context and Filter objects use the originally given context data, but do not mutate the originally given context data itself. This means that subsequent `get()`s will keep using the previously given context order, but can be reset to the original (or last supplied) context data at any time using:
+
+```php
+$Context->resetContextOrder();
+
+// Context is now back to:
+[
+    'user' => 'Admin',
+    'country' => 'UK',
+    'manufacturer' => 'Ford'
+];
+```
+
+Or reset per filter (note, if a global reorder was defined, then the filter will still inherit this, unless the global order is also reset (or the desired order is supplied for the filter):
+
+```php
+$Context->getFilter('defaults')->resetContextOrder();
+```
