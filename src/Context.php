@@ -91,6 +91,16 @@ class Context
     }
 
 
+    public function reorderContext($newOrder, $clip = true)
+    {
+        $this->Context->orderBy($newOrder);
+
+        if ($clip) {
+            $this->Context = $this->Context->intersectKeys($newOrder);
+        }
+    }
+
+
     /**
      * Runs array_merge on the filter stack, in the order the filters were added
      * 

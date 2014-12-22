@@ -29,15 +29,18 @@ $configs = [
             'hey' => 'there'
         ],
         'admin' => [
-            'yolo' => 'swaggins'
+            'yolo' => 'swaggins',
+            'hey' => 'admin'
         ]
     ],
     'conditions' => [
+        'ca_bbhd' => new Condition(['country' => 'ca', 'game' => 'bbhd'], ['nope' => 'im out'])
     ]
 ];
 
 $context = [
-	'country' => 'us',
+	'country' => 'ca',
+    'game' => 'bbhd',
 	'user' => 'admin'
 ];
 
@@ -50,7 +53,9 @@ $Context = new Context($context);
 $Context->addFilter('common', new CommonFilter($config));
 $Context->addFilter('defaults', new DefaultsFilter($config));
 $Context->addFilter('conditions', new ConditionFilter($config));
-$Context->getContext()->append('bbs', 'game');
+$Context->reorderContext('user.country', false);
+$Context->reorderContext('game');
+
 // In request process
 $results = $Context->get();
 
