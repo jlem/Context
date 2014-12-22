@@ -219,8 +219,9 @@ $Context->resetContextOrder();
 ];
 ```
 
-Or reset per filter (note, if a global reorder was defined, then the filter will still inherit this, unless the global order is also reset (or the desired order is supplied for the filter):
+Or reset per filter:
 
 ```php
 $Context->getFilter('defaults')->resetContextOrder();
 ```
+*note, if a global reorder was defined, then the filter will still inherit this, unless the global order is also reset (or the desired order is supplied for the filter*
