@@ -164,7 +164,7 @@ $Context->reorderContext(['country', 'user', 'manufacturer']); // optional array
 Note here that you're re-ordering by the context keys, rather than defining a whole new context array. The reason for this is so that you can re-order by the underlying contexts, rather than having to worry about the values of those contexts.
 
 
-### Option 3: changing order per filter
+#### Option 3: changing order per filter
 
 In addition to chaging the context globally for all filters, you can specify certain context orders for certain filters. These will always override any global context reordering.
 
