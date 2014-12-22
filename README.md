@@ -133,17 +133,12 @@ But wait, how come the UK default for `'show_comment_ip'` trumped the same confi
 
 If you want, you can change the context order for all filters, at any time in the request cycle.
 
-#### Option 1: re-defining and resetting.
+#### Option 1: changing the order globally
 ```php
-$context = [
-    'country' => 'UK',         // Notice that UK comes before Admin now
-    'user' => 'Admin',
-    'manufacturer' => 'Ford'
-];
+$Context->reorderContext('country.user.manufacturer');
+$Context->reorderContext(['country', 'user', 'manufacturer']); // optional array syntax
 
-
-$Context->setContext($context);
-$filteredConfig = $Context->get();
+$filteredContext = $Context->get();
 ```
 
 Should now return
@@ -156,23 +151,16 @@ Should now return
 ]
 ```
 
-#### Option 2: changing the order on the fly
-```php
-$Context->reorderContext('country.user.manufacturer');
-$Context->reorderContext(['country', 'user', 'manufacturer']); // optional array syntax
-```
 Note here that you're re-ordering by the context keys, rather than defining a whole new context array. The reason for this is so that you can re-order by the underlying contexts, rather than having to worry about the values of those contexts.
 
 
-#### Option 3: changing order per filter
+#### Option 2: changing order per filter
 
 In addition to chaging the context globally for all filters, you can specify certain context orders for certain filters. These will always override any global context reordering.
 
 ```php
 $Context->getFilter('defaults')->reorderContext('manufacturer.user.country');
 $Context->getFilter('conditions')->reorderContext('country.manufacturer.user');
-
-$filteredConfig = $Context->get();
 ```
 
 ## Reducing Context
@@ -200,13 +188,13 @@ $Conext->reorderContext('country.manufacturer', false);
 [
     'country' => 'UK',
     'manufacturer' => 'Ford',
-    'user' => 'Admin'  // Was not specified, so it stays on the end
+    'user' => 'Admin'  // Was not specified, so it stays on the end (array_merge behavior)
 ];
 ```
 
-## Resetting Context
+## Resetting Context Order
 
-**NOTE** When reorders are supplied (as opposed to full resets), they mutate the state of how the Context and Filter objects use the originally given context data, but do not mutate the originally given context data itself. This means that subsequent `get()`s will keep using the previously given context order, but can be reset to the original (or last supplied) context data at any time using:
+**NOTE** When reorders are supplied (as opposed to full resets with data), they mutate the state of how the Context and Filter objects use the originally given context data, but do not mutate the originally given context data itself. This means that subsequent `get()`s will keep using the previously given context order, but can be reset to the original (or last supplied) context data at any time using:
 
 ```php
 $Context->resetContextOrder();
@@ -225,3 +213,29 @@ Or reset per filter:
 $Context->getFilter('defaults')->resetContextOrder();
 ```
 *note, if a global reorder was defined, then the filter will still inherit this, unless the global order is also reset (or the desired order is supplied for the filter*
+
+## Disabling a Filter
+
+```php
+$Context->disableFilter('defaults');
+```
+
+Now only the `'common'` and `'conditions'` filters will be used for the request. To re-enable it:
+
+```php
+$Context->enableFilter('defaults');
+```
+
+## Disabling Context
+
+```php
+$Context->disableContext();
+```
+
+This effectively uses only the `'common'` filter, which does not make use of contexts at all. Put another way, it's the same as disabling *all but* the `'common'` filter.
+
+To re-enable it:
+
+```php
+$Context->enableContext();
+```
