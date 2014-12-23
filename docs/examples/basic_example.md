@@ -1,8 +1,6 @@
-# Basic Example
-
 You'll likely do all of this early in the bootstrapping process, but you can really do it at any time in the request cycle before you need to use the data
 
-### 1. Define your configuration
+# 1. Define your configuration
 
 ```php
 $config = [
@@ -47,19 +45,21 @@ $config = [
 ];
 ```
 
-### 2. Then define the context of the request itself (ORDER MATTERS!!!)
+
+# 2. Define the context (order matters!)
 
 A note about order: the order determines the order in which Context and its filters apply `array_merge`. It override from first to last, and falls back from last to first. That is, given the below in the `defaults` filter, `'Ford'` overrides `'UK'` which overrides `'Admin'`. However, if there is any configuration key defined in `'Admin'` that isn't defined in either `'UK'` or `'Ford'`, then it still gets included in the config array, thanks to `array_merge`
 
 ```php
 $context = [
-    'user' => 'Admin',          // maybe get this from Session
-    'country' => 'UK',          // maybe from a subdomain or user-agent query as part of the request
-    'manufacturer' => 'Ford'    // maybe from a query param, route slug, or what have you
+    'user' => 'Admin',
+    'country' => 'UK',
+    'manufacturer' => 'Ford'
 ];
 ```
 
-### 3. Create the Context and use the desired filters (ORDER MATTERS!!!)
+
+# 3. Initalize Context, add filters (order matters!)
 
 ```php
 $Context = new Context($context);
@@ -68,11 +68,13 @@ $Context->addFilter('defaults', new DefaultsFilter($config));
 $Context->addFilter('conditions', new ConditionsFilter($config));
 ```
 
-### 4. Retrieve the configuration that represents the request's context
+
+# 4. Get your filtered config data
 
 ```php
 $filteredConfig = $Context->get();
 ```
+
 
 Based on the context defined in step 2, the above call will return the following array:
 
