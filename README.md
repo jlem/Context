@@ -14,11 +14,11 @@ Suppose you have a page that shows information about various car models or parts
 
 Whew, that's a lot of highly specific business rules, don't you think? 
 
-If you didn't care about maintainability, you may be tempted to do something like this:
+To satisfy those business rules, you may be tempted to do something like this:
 
 ```php
 if ($country === 'uk') {
-    if ($manufacturer == 'ford') {
+    if ($manufacturer === 'ford') {
         ...
     } else {
         ...
@@ -28,7 +28,7 @@ if ($country === 'uk') {
 }
 ```
 
-You get the idea. This quickly becomes spaghetti code, especially if that logic spreads around different layers of your application - controllers, models, views/templates, javascript. God forbid you have to add a new manufacturer or change the presentation of Honda in Canada...
+You get the idea. However, this quickly becomes spaghetti code, especially if that logic spreads around different layers of your application - controllers, models, views/templates, javascript. God forbid you have to add a new manufacturer or change the presentation of Honda in Canada...
 
 Maybe you can handle some of these buisiness rules via different URIs that point to different controllers that load different views, but that may not be desirable and could lead to code duplication.
 
