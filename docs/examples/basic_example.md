@@ -1,9 +1,6 @@
 You'll likely do all of this early in the bootstrapping process, but you can really do it at any time in the request cycle before you need to use the data
 
-# 1. Define your configuration
-
 ```php
-
 
 // Define your config data
 
