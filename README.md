@@ -172,7 +172,7 @@ $Context->reorderFilterContext('conditions', 'country.manufacturer.user'); // Al
 Even if your initial context contained three facets, you don't necessarily need to utilize all three when re-ordering.
 
 ```php
-$Conext->reorderContext('country.manufacturer');
+$Context->reorderContext('country.manufacturer');
 
 // Context has become:
 [
@@ -186,7 +186,7 @@ By doing the above, you've effectively dropped `'user'` out of the context scope
 If you want to reorder just one or two facets, pass in `false` as the second parameter to keep all context facets, but place the specified ones at the beginning:
 
 ```php
-$Conext->reorderContext('country.manufacturer', false);
+$Context->reorderContext('country.manufacturer', false);
 
 // Context has become:
 [
