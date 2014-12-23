@@ -14,11 +14,11 @@ Suppose you have a page that shows information about various car models or parts
 
 Whew, that's a lot of highly specific business rules, don't you think? 
 
-If you didn't care about maintainability, you may be tempted to do something like this:
+To satisfy those business rules, you may be tempted to do something like this:
 
 ```php
 if ($country === 'uk') {
-    if ($manufacturer == 'ford') {
+    if ($manufacturer === 'ford') {
         ...
     } else {
         ...
@@ -28,7 +28,7 @@ if ($country === 'uk') {
 }
 ```
 
-You get the idea. This quickly becomes spaghetti code, especially if that logic spreads around different layers of your application - controllers, models, views/templates, javascript. God forbid you have to add a new manufacturer or change the presentation of Honda in Canada...
+You get the idea. However, this quickly becomes spaghetti code, especially if that logic spreads around different layers of your application - controllers, models, views/templates, javascript. God forbid you have to add a new manufacturer or change the presentation of Honda in Canada...
 
 Maybe you can handle some of these buisiness rules via different URIs that point to different controllers that load different views, but that may not be desirable and could lead to code duplication.
 
@@ -160,7 +160,11 @@ In addition to chaging the context globally for all filters, you can specify cer
 
 ```php
 $Context->getFilter('defaults')->reorderContext('manufacturer.user.country');
+$Context->reorderFilterContext('defaults', 'manufacturer.user.country'); // Alternative
+
 $Context->getFilter('conditions')->reorderContext('country.manufacturer.user');
+$Context->reorderFilterContext('conditions', 'country.manufacturer.user'); // Alternative
+
 ```
 
 ## Reducing Context
@@ -168,7 +172,7 @@ $Context->getFilter('conditions')->reorderContext('country.manufacturer.user');
 Even if your initial context contained three facets, you don't necessarily need to utilize all three when re-ordering.
 
 ```php
-$Conext->reorderContext('country.manufacturer');
+$Context->reorderContext('country.manufacturer');
 
 // Context has become:
 [
@@ -182,7 +186,7 @@ By doing the above, you've effectively dropped `'user'` out of the context scope
 If you want to reorder just one or two facets, pass in `false` as the second parameter to keep all context facets, but place the specified ones at the beginning:
 
 ```php
-$Conext->reorderContext('country.manufacturer', false);
+$Context->reorderContext('country.manufacturer', false);
 
 // Context has become:
 [
@@ -239,3 +243,26 @@ To re-enable it:
 ```php
 $Context->enableContext();
 ```
+
+# Filter Documentation
+
+Filters are the core of the context parsing system. Each filter is responsible for parsing and prioritizing its own piece of the configuration array. The Defaults Filter handles the 'defaults' config group, the Conditions Filter handles the 'conditions' etc. Each uses the supplied context data and ordering in its own way to pre-filter its configuration group before it gets assembled by the main Context object. This means that extending the behavior of Context is as simple as registering a filter and providing configuration data for it to parse.
+
+## Condition Filter
+
+The condition filter allows you to modify both its conditions, and those conditions themselves, on the fly.
+
+#### Adding a New Condition
+
+You can add new conditions on the fly using `$ConditionFilter->addCondition(string $name, Condition $condition)`:
+
+```php
+$ConditionFilter->addCondition('us_admin', new Condition(['country' => 'US', 'user' => 'Admin'], ['some' => 'config']));
+```
+
+The first argument is an arbitrary name to identify the condition. This name is not used for anything other than lookup if you need it. The second argument is a `Condition` object.
+
+A `Condition` itself takes two arrays as arguments: the first is the condition under which the context data should match, and the second is the new configuration data to use should the condition match the context. This new configuration data obeys the same rules as all of the other configuration data: if it's new/unique it gets appended to the merged master. If it contains the same config key as an existing configuration item, it overrides it (if the condition matches, of course!)
+
+Conditions do not presently cascade: only the last defined Condition that matches the given context, will be used.
+
