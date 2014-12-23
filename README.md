@@ -246,6 +246,8 @@ $Context->enableContext();
 
 # Filter Documentation
 
+Filters are the core of the context parsing system. Each filter is responsible for parsing and prioritizing its own piece of the configuration array. The Defaults Filter handles the 'defaults' config group, the Conditions Filter handles the 'conditions' etc. Each uses the supplied context data and ordering in its own way to pre-filter its configuration group before it gets assembled by the main Context object. This means that extending the behavior of Context is as simple as registering a filter and providing configuration data for it to parse.
+
 ## Condition Filter
 
 The condition filter allows you to modify both its conditions, and those conditions themselves, on the fly.
