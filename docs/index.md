@@ -12,9 +12,9 @@ Suppose you have car tuner enthusiast site with a page that shows information ab
 * Moderators can see all public comments as well as see/approve pending comments
 * Regular users can only see publically visible comments
 
-Whew, that's a lot of highly specific business rules, don't you think? 
+Whew, that's a lot of highly specific business rules overloading one request, don't you think? 
 
-If you didn't care about maintainability, you may be tempted to do something like this:
+You may be tempted to do something like this:
 
 ```php
 if ($country === 'uk') {
@@ -30,7 +30,7 @@ if ($country === 'uk') {
 
 You get the idea. This quickly becomes spaghetti code, especially if that logic spreads around different layers of your application - controllers, models, views/templates, javascript. God forbid you have to add a new manufacturer or change the presentation of Honda in Canada...
 
-Maybe you can handle some of these buisiness rules via different URIs that point to different controllers that load different views, but that may not be desirable and could lead to code duplication.
+Maybe you can handle some of these business rules via different URIs that point to different controllers that load different views, but that may not be desirable and could lead to code duplication.
 
 There has to a better way of handling these business rules and context facets, right?
 

@@ -52,13 +52,15 @@ class ConditionFilter extends Filter
 
     public function getData()
     {
-        foreach ($this->conditions->reverse() as $condition) {
+        $matchedConditions = array();
+
+        foreach ($this->conditions->toArray() as $condition) {
             if($condition->matchesContext($this->getContextSequence())) {
-                return $condition->getConfiguration();
+                $matchedConditions[] = $condition->getConfiguration();
             }
         }
 
-        return array();
+        return call_user_func_array('array_merge', $matchedConditions);
     }
 
 

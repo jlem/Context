@@ -61,8 +61,7 @@ abstract class Filter
             return $this->Context; 
         }
 
-        $ContextOverride = clone $this->Context;
-        $ContextOverride->orderBy($this->contextOrder);
+        $ContextOverride = $this->Context->orderBy($this->contextOrder);
 
         if ($this->clipContext) {
             $ContextOverride = $ContextOverride->intersectKeys($this->contextOrder);

@@ -51,13 +51,15 @@ $config = [
 
     ],
     'conditions' => [
+        'admin_uk' => new Condition(['country' => 'UK', 'user' => 'Admin'],
+                                    ['show_tuner_truck_module' => 'admin_uk']),
         'ford_uk' => new Condition(['country' => 'UK', 'manufacturer' => 'Ford'], 
-                                   ['show_tuner_truck_module' => false])
+                                   ['show_tuner_truck_module' => 'ford_uk']),
     ]
 ];
 
 $context = [
-    'userType' => 'Admin',     // maybe get this from Session
+    'user' => 'Admin',     // maybe get this from Session
     'country' => 'UK',         // maybe from a subdomain or user-agent query as part of the request
     'manufacturer' => 'Ford'   // maybe from a query param, route slug, or what have you
 ];
