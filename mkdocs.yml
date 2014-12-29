@@ -2,5 +2,4 @@ site_name: Jlem\Context
 pages:
 - ['index.md', 'Home']
 - ['usage/basic_example.md', 'Usage', 'Basic Example']
-- ['usage/basic_example_with_conditions.md', 'Usage', 'Basic Example With Conditions']
 - ['usage/context_ordering.md', 'Usage', 'Ordering']

@@ -28,7 +28,6 @@ $configData = [
     | Each context value is represented as a config key.
     |
     */
-  
 
     'defaults' => [
         'UK' => [
@@ -37,10 +36,12 @@ $configData = [
             'show_tuner_truck_module' => false
         ],
         'Ford' => [
-            'manually_approve_comments' => true
+            'manually_approve_comments' => true,
+            'logo' => 'ford.png'
         ],
         'Honda' => [
-            'show_tuner_truck_module' => false
+            'show_tuner_truck_module' => false,
+            'logo' => 'honda.png'
         ],
         'Admin' => [
             'show_comment_ip' => true,
@@ -49,6 +50,19 @@ $configData = [
         'Moderator' => [
             'comment_query_criteria' => 'Acme\Comment\Criteria\Moderator'
         ]
+    ],
+
+
+    /* 
+    | conditions represent configurations for arbitrary combinations
+    | of contexts. These override both 'defaults' and 'common', 
+    | if the context of the request matches.
+    |
+    */
+
+    'conditions' => [
+        'ford_uk' => new Condition(['country' => 'UK', 'manufacturer' => 'Ford'], 
+                                   ['logo' => 'ford_uk.png'])
     ]
 ];
 
@@ -58,8 +72,8 @@ $configData = [
 
 $contextData = [
     'user' => 'Admin',
-    'country' => 'UK'
-    'manufacturer' => 'Ford',
+    'country' => 'UK',
+    'manufacturer' => 'Ford'
 ];
 
 
@@ -69,6 +83,7 @@ $contextData = [
 $Context = new Context($contextData);
 $Context->addFilter('common', new CommonFilter($configData));
 $Context->addFilter('defaults', new DefaultsFilter($configData));
+$Context->addFilter('conditions', new ConditionsFilter($configData));
 
 
 
@@ -77,7 +92,7 @@ $Context->addFilter('defaults', new DefaultsFilter($configData));
 $filteredConfig = $Context->get();
 ```
 
-Based on the context defined in step 2, the above call will return the following array:
+Based on the context defined above, the following array will be returned
 
 ```php
 [
@@ -85,9 +100,10 @@ Based on the context defined in step 2, the above call will return the following
     'show_comment_ip' => false,             // Determined by the 'UK' default
     'comment_query_criteria' => 'Acme\Comment\Criteria\Admin', // Determined by the 'Admin' default
     'show_tuner_truck_module' => false,     // Determined by the 'UK' default
-    'manually_approve_comments' => true     // Determined by the 'Ford' default
+    'manually_approve_comments' => true,    // Determined by the 'Ford' default
+    'logo' => 'ford_uk.png',                // Determined by the 'Ford' default
 ]
 ```
 
-How come the UK default for `'show_comment_ip'` trumped the same configuration setting by the `'Admin'` default sibling? Because of the order in which the context was defined. Even though behind the scenes Context used both the `'UK'` and `'Admin'` defaults, the `'UK'` context was set *after* the `'Admin'` context, so it takes precedence. We can change this order on the fly to get different results (more on that later).
+How come the UK default for `'show_comment_ip'` trumped the same configuration setting by the `'Admin'` default sibling? Because of the order in which the context was defined. Even though behind the scenes Context used both the `'UK'` and `'Admin'` defaults, the `'UK'` context was set *after* the `'Admin'` context, so it takes precedence. We can change this order on the fly to get different results:
 
