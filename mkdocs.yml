@@ -2,4 +2,4 @@ site_name: Jlem\Context
 pages:
 - ['index.md', 'Home']
 - ['usage/complete_example.md', 'Usage', 'Complete Example']
-- ['usage/context_ordering.md', 'Usage', 'Changing Context Orderk']
+- ['usage/context_ordering.md', 'Usage', 'Changing Context Order']
