@@ -55,3 +55,6 @@ $Context->reorderFilterContext('defaults', ['manufacturer', 'user', 'country']);
 $Context->getFilter('conditions')->reorderContext(['country', 'manufacturer', 'user']);
 $Context->reorderFilterContext('conditions', ['country', 'manufacturer', 'user']); // Alternative
 ```
+
+# Reducing Context Scope
+TODO
