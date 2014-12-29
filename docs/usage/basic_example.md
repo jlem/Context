@@ -38,7 +38,7 @@ $configData = [
         ],
         'Ford' => [
             'manually_approve_comments' => true
-        ]
+        ],
         'Honda' => [
             'show_tuner_truck_module' => false
         ],
