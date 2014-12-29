@@ -10,6 +10,7 @@ Suppose you have car tuner enthusiast site with a page that shows information ab
 * Admins can see all comments (including pending/soft-deleted) as well IP addresses associated with comments
 * However, let's pretend UK has privacy laws that prohibits displaying IP addresses to non-employees/owners
 * Moderators can see all public comments as well as see/approve pending comments
+* In the Ford section, comments must be manually approved before being displayed
 * Regular users can only see publically visible comments
 
 Whew, that's a lot of highly specific business rules overloading one request, don't you think? 

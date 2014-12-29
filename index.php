@@ -2,10 +2,6 @@
 
 require './vendor/autoload.php';
 
-use Jlem\Context\ContextSet;
-use Jlem\Context\ConfigurationSet;
-use Jlem\Context\Mergers\SimpleMerger;
-use Jlem\Context\Mergers\ComplexMerger;
 use Jlem\Context\Filters\CommonFilter;
 use Jlem\Context\Filters\DefaultsFilter;
 use Jlem\Context\Filters\ConditionFilter;

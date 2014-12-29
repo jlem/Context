@@ -136,15 +136,8 @@ class Context
 
 	public function get($key = null, $forceMerge = false)
 	{
-        if ($forceMerge || empty($this->merged)) {
-            $this->mergeFilters();
-        }
-
-        if (!$key) {
-            return $this->merged;
-        }
-
-		return $this->merged[$key];
+        $result = $this->mergeFilters();
+        return $key ? $result[$key] : $result;
 	}
 
 
@@ -233,7 +226,7 @@ class Context
         }
 
         // Merge the filter data
-        return $this->merged = new ArrayOk(call_user_func_array('array_merge', $toMerge));
+        return new ArrayOk(call_user_func_array('array_merge', $toMerge));
     }
 
 
@@ -258,6 +251,7 @@ class Context
 
         return array();
     }
+
 
 
     /**

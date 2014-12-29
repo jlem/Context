@@ -60,7 +60,7 @@ class ConditionFilter extends Filter
             }
         }
 
-        return call_user_func_array('array_merge', $matchedConditions);
+        return empty($matchedConditions) ? $matchedConditions : call_user_func_array('array_merge', $matchedConditions);
     }
 
 
