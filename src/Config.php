@@ -3,7 +3,7 @@
 use Jlem\Context\Filters\Filter;
 use Jlem\ArrayOk\ArrayOk;
 
-class Context
+class Config
 {
     protected $Context;
     protected $contextOrder = null;

@@ -1,14 +1,14 @@
 Since the main Context object and the included filters all make use of `array_merge` behind the scenes for cascading/overriding, the order in which you define things matters:
 
-* The order in which you define your `$contextData` matters
-* The order in which you add filters to `$Context` matters
+* The order in which you define your `$context` matters
+* The order in which you add filters to `$Config` matters
 * The order in which you add conditions to the `'conditions'` array matters
 * The order of everything else *DOES NOT MATTER*
 
 Overriding happens first to last, and falls back from last to first. Using the context data from the previous example:
 
 ```php
-$contextData = [
+$context = [
     'user' => 'Admin',
     'country' => 'UK',
     'manufacturer' => 'Ford'
@@ -23,10 +23,10 @@ You can change the context order for all filters, at any time in the request cyc
 # Changing the order globally
 
 ```php
-$Context->reorderContext(['country', 'user', 'manufacturer']);
-$Context->reorderContext('country,user,manufacturer'); // alternative comma-separated string syntax
+$Config->reorderContext(['country', 'user', 'manufacturer']);
+$Config->reorderContext('country,user,manufacturer'); // alternative comma-separated string syntax
 
-$filteredContext = $Context->get();
+$config = $Config->get();
 ```
 
 Should now return
@@ -49,11 +49,11 @@ Note here that you're re-ordering by the context keys, rather than defining a wh
 In addition to chaging the context globally for all filters, you can specify certain context orders for certain filters. These will always override any global context reordering.
 
 ```php
-$Context->getFilter('defaults')->reorderContext(['manufacturer', 'user', 'country']);
-$Context->reorderFilterContext('defaults', ['manufacturer', 'user', 'country']); // Alternative
+$Config->getFilter('defaults')->reorderContext(['manufacturer', 'user', 'country']);
+$Config->reorderFilterContext('defaults', ['manufacturer', 'user', 'country']); // Alternative
 
-$Context->getFilter('conditions')->reorderContext(['country', 'manufacturer', 'user']);
-$Context->reorderFilterContext('conditions', ['country', 'manufacturer', 'user']); // Alternative
+$Config->getFilter('conditions')->reorderContext(['country', 'manufacturer', 'user']);
+$Config->reorderFilterContext('conditions', ['country', 'manufacturer', 'user']); // Alternative
 ```
 
 # Reducing Context Scope

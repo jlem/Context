@@ -4,7 +4,7 @@ You'll likely do all of this early in the bootstrapping process, but you can rea
 
 // Define your config data
 
-$configData = [
+$settings = [
 
     /* 
     | common contains all of the configuration keys/values
@@ -70,7 +70,7 @@ $configData = [
 
 // Define the context data (order matters)
 
-$contextData = [
+$context = [
     'user' => 'Admin',
     'country' => 'UK',
     'manufacturer' => 'Ford'
@@ -78,18 +78,18 @@ $contextData = [
 
 
 
-// Initialize Context, add filters (order matters)
+// Initialize Config with context, add filters (order matters)
 
-$Context = new Context($contextData);
-$Context->addFilter('common', new CommonFilter($configData));
-$Context->addFilter('defaults', new DefaultsFilter($configData));
-$Context->addFilter('conditions', new ConditionsFilter($configData));
+$Config = new Config($context);
+$Config->addFilter('common', new CommonFilter($settings));
+$Config->addFilter('defaults', new DefaultsFilter($settings));
+$Config->addFilter('conditions', new ConditionsFilter($settings));
 
 
 
 // Retrieve your data when you need it
 
-$filteredConfig = $Context->get();
+$config = $Config->get();
 ```
 
 Based on the context defined above, the following array will be returned

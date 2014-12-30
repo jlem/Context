@@ -4,7 +4,7 @@ use Jlem\Context\Filters\CommonFilter;
 use Jlem\Context\Filters\DefaultsFilter;
 use Jlem\Context\Filters\ConditionFilter;
 use Jlem\Context\Filters\Condition;
-use Jlem\Context\Context;
+use Jlem\Context\Config;
 
 class ContexTest extends PHPUnit_Framework_Testcase
 {
@@ -59,13 +59,13 @@ class ContexTest extends PHPUnit_Framework_Testcase
             'manufacturer' => 'Ford'   // maybe from a query param, route slug, or what have you
         );
 
-        $Context = new Context($context);
+        $Config = new Config($context);
             
-        $Context->addFilter('common', new CommonFilter($config));
-        $Context->addFilter('defaults', new DefaultsFilter($config));
-        $Context->addFilter('conditions', new ConditionFilter($config));
+        $Config->addFilter('common', new CommonFilter($config));
+        $Config->addFilter('defaults', new DefaultsFilter($config));
+        $Config->addFilter('conditions', new ConditionFilter($config));
 
-        $actual = $Context->get()->items;
+        $actual = $Config->get()->items;
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -89,15 +89,15 @@ class ContexTest extends PHPUnit_Framework_Testcase
             'manufacturer' => 'Ford'   // maybe from a query param, route slug, or what have you
         );
 
-        $Context = new Context($context);
+        $Config = new Config($context);
             
-        $Context->addFilter('common', new CommonFilter($config));
-        $Context->addFilter('defaults', new DefaultsFilter($config));
-        $Context->addFilter('conditions', new ConditionFilter($config));
+        $Config->addFilter('common', new CommonFilter($config));
+        $Config->addFilter('defaults', new DefaultsFilter($config));
+        $Config->addFilter('conditions', new ConditionFilter($config));
 
-        $Context->disableContext();
+        $Config->disableContext();
 
-        $actual = $Context->get()->items;
+        $actual = $Config->get()->items;
 
         $expected = $config['common'];
 
@@ -114,16 +114,16 @@ class ContexTest extends PHPUnit_Framework_Testcase
             'manufacturer' => 'Ford'   // maybe from a query param, route slug, or what have you
         );
 
-        $Context = new Context($context);
+        $Config = new Config($context);
             
-        $Context->addFilter('common', new CommonFilter($config));
-        $Context->addFilter('defaults', new DefaultsFilter($config));
-        $Context->addFilter('conditions', new ConditionFilter($config));
+        $Config->addFilter('common', new CommonFilter($config));
+        $Config->addFilter('defaults', new DefaultsFilter($config));
+        $Config->addFilter('conditions', new ConditionFilter($config));
 
-        $Context->disableContext();
-        $Context->enableContext();
+        $Config->disableContext();
+        $Config->enableContext();
 
-        $actual = $Context->get()->items;
+        $actual = $Config->get()->items;
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -147,15 +147,15 @@ class ContexTest extends PHPUnit_Framework_Testcase
             'manufacturer' => 'Ford'   // maybe from a query param, route slug, or what have you
         );
 
-        $Context = new Context($context);
+        $Config = new Config($context);
             
-        $Context->addFilter('common', new CommonFilter($config));
-        $Context->addFilter('defaults', new DefaultsFilter($config));
-        $Context->addFilter('conditions', new ConditionFilter($config));
+        $Config->addFilter('common', new CommonFilter($config));
+        $Config->addFilter('defaults', new DefaultsFilter($config));
+        $Config->addFilter('conditions', new ConditionFilter($config));
 
-        $Context->disableFilter('common');
+        $Config->disableFilter('common');
 
-        $actual = $Context->get()->items;
+        $actual = $Config->get()->items;
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -178,15 +178,15 @@ class ContexTest extends PHPUnit_Framework_Testcase
             'manufacturer' => 'Ford'
         );
 
-        $Context = new Context($context);
+        $Config = new Config($context);
             
-        $Context->addFilter('common', new CommonFilter($config));
-        $Context->addFilter('defaults', new DefaultsFilter($config));
-        $Context->addFilter('conditions', new ConditionFilter($config));
+        $Config->addFilter('common', new CommonFilter($config));
+        $Config->addFilter('defaults', new DefaultsFilter($config));
+        $Config->addFilter('conditions', new ConditionFilter($config));
         
-        $Context->reorderContext('country,user,manufacturer');
+        $Config->reorderContext('country,user,manufacturer');
 
-        $actual = $Context->get()->items;
+        $actual = $Config->get()->items;
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -210,15 +210,15 @@ class ContexTest extends PHPUnit_Framework_Testcase
             'manufacturer' => 'Ford'
         );
 
-        $Context = new Context($context);
+        $Config = new Config($context);
             
-        $Context->addFilter('common', new CommonFilter($config));
-        $Context->addFilter('defaults', new DefaultsFilter($config));
-        $Context->addFilter('conditions', new ConditionFilter($config));
+        $Config->addFilter('common', new CommonFilter($config));
+        $Config->addFilter('defaults', new DefaultsFilter($config));
+        $Config->addFilter('conditions', new ConditionFilter($config));
         
-        $Context->reorderContext(array('country', 'user', 'manufacturer'));
+        $Config->reorderContext(array('country', 'user', 'manufacturer'));
 
-        $actual = $Context->get()->items;
+        $actual = $Config->get()->items;
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -242,15 +242,15 @@ class ContexTest extends PHPUnit_Framework_Testcase
             'manufacturer' => 'Ford'
         );
 
-        $Context = new Context($context);
+        $Config = new Config($context);
             
-        $Context->addFilter('common', new CommonFilter($config));
-        $Context->addFilter('defaults', new DefaultsFilter($config));
-        $Context->addFilter('conditions', new ConditionFilter($config));
+        $Config->addFilter('common', new CommonFilter($config));
+        $Config->addFilter('defaults', new DefaultsFilter($config));
+        $Config->addFilter('conditions', new ConditionFilter($config));
         
-        $Context->reorderContext(array('country'));
+        $Config->reorderContext(array('country'));
 
-        $actual = $Context->get()->items;
+        $actual = $Config->get()->items;
 
         $expected = array(
             'show_tuner_truck_module' => true,
