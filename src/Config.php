@@ -134,7 +134,7 @@ class Config
      * @return mixed
     */
 
-	public function get($key = null, $forceMerge = false)
+	public function get($key = null)
 	{
         $result = $this->mergeFilters();
         return $key ? $result[$key] : $result;
