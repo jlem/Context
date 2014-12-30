@@ -157,6 +157,22 @@ class Config
 
 
     /**
+     * Appends a new key/value pair to the existing context 
+     *
+     * @param string $key
+     * @param mixed $value
+     * @access public
+     * @return void
+    */
+
+    public function appendContext($key, $value)
+    {
+        $this->Context->append($value, $key);
+    }
+
+
+
+    /**
      * Globally applies a new context order to all filters
      *
      * @param mixed array|string $contextOrder
