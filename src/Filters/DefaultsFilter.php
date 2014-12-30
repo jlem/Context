@@ -29,14 +29,28 @@ class DefaultsFilter extends Filter
 
     protected function mergeDefaults(ArrayOk $sequence, ArrayOk $config)
     {
-        $toMerge = array();
+        /*$items = $config->items;
+        $sequence = $sequence->toArray();
 
-        foreach ($sequence->toArray() as $context) {
-            if ($config->exists($context)) {
-                $toMerge[] = $config[$context]->toArray();
-            }
+        if (is_null($items)) {
+            return;
         }
 
-        return (empty($toMerge)) ?: call_user_func_array('array_merge', $toMerge);
+        $initialConfig = array_shift($items);
+        $initialSequence = array_shift($sequence);
+
+        foreach ($sequence as $context) {
+            if ($config->exists($context)) {
+                $initialConfig->replaceRecursiveNumeric($config[$context]);
+            }
+        }*/
+
+        return array_reduce($sequence->toArray(), function($carry, $item) use ($config) {
+                var_dump($config[$item]);
+            if ($config->exists($item)) {
+                $carry->replaceRecursiveNumeric($config[$item]);
+                return $carry;
+            }
+        }, $config[$sequence->first()]);
     }
 }
