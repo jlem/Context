@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jlem/ArrayOk.git",
-                "reference": "730d6490a71891f0080e90c7c8b6a4ad16fa8d44"
+                "reference": "bb9dfbf9b5c5f1932fe4f289a7410fac966a374d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jlem/ArrayOk/zipball/730d6490a71891f0080e90c7c8b6a4ad16fa8d44",
-                "reference": "730d6490a71891f0080e90c7c8b6a4ad16fa8d44",
+                "url": "https://api.github.com/repos/jlem/ArrayOk/zipball/bb9dfbf9b5c5f1932fe4f289a7410fac966a374d",
+                "reference": "bb9dfbf9b5c5f1932fe4f289a7410fac966a374d",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                 "source": "https://github.com/jlem/ArrayOk/tree/master",
                 "issues": "https://github.com/jlem/ArrayOk/issues"
             },
-            "time": "2014-12-31 21:08:48"
+            "time": "2014-12-31 21:19:35"
         }
     ],
     "packages-dev": [],
