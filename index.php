@@ -6,7 +6,7 @@ use Jlem\Context\Filters\CommonFilter;
 use Jlem\Context\Filters\DefaultsFilter;
 use Jlem\Context\Filters\ConditionFilter;
 use Jlem\Context\Filters\Condition;
-use Jlem\Context\Context;
+use Jlem\Context\Config;
 
 use Jlem\ArrayOk\ArrayOk;
 
@@ -20,7 +20,8 @@ $config = [
         'show_tuner_truck_module' => true,
         'date_format' => 'M j, Y',
         'comment_query_criteria' => 'Acme\Comment\Criteria\Member', // Give this to a repository
-        'show_comment_ip' => false
+        'show_comment_ip' => false,
+        'some_vals' => ['one', 'two', 'three']
     ],
 
     // 'defaults' are the default configurations for each specific context value
@@ -29,7 +30,8 @@ $config = [
     'defaults' => [
         'UK' => [
             'date_format' => 'j M, Y',
-            'show_comment_ip' => false
+            'show_comment_ip' => false,
+            'some_vals' => ['five']
         ],
         'Honda' => [
             'show_tuner_truck_module' => false
@@ -61,13 +63,13 @@ $context = [
 ];
 
 
-$Context = new Context($context);
+$Config = new Config($context);
     
-$Context->addFilter('common', new CommonFilter($config));
-$Context->addFilter('defaults', new DefaultsFilter($config));
-$Context->addFilter('conditions', new ConditionFilter($config));
+$Config->addFilter('common', new CommonFilter($config));
+$Config->addFilter('defaults', new DefaultsFilter($config));
+$Config->addFilter('conditions', new ConditionFilter($config));
 
 // In request process
-$results = $Context->get();
+$results = $Config->get();
 
 var_dump($results);

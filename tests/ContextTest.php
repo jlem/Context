@@ -65,7 +65,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         $Config->addFilter('defaults', new DefaultsFilter($config));
         $Config->addFilter('conditions', new ConditionFilter($config));
 
-        $actual = $Config->get()->items;
+        $actual = $Config->get()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -97,7 +97,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
 
         $Config->disableContext();
 
-        $actual = $Config->get()->items;
+        $actual = $Config->get()->toArray();
 
         $expected = $config['common'];
 
@@ -123,7 +123,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         $Config->disableContext();
         $Config->enableContext();
 
-        $actual = $Config->get()->items;
+        $actual = $Config->get()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -155,7 +155,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
 
         $Config->disableFilter('common');
 
-        $actual = $Config->get()->items;
+        $actual = $Config->get()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -186,7 +186,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         
         $Config->reorderContext('country,user,manufacturer');
 
-        $actual = $Config->get()->items;
+        $actual = $Config->get()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -218,7 +218,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         
         $Config->reorderContext(array('country', 'user', 'manufacturer'));
 
-        $actual = $Config->get()->items;
+        $actual = $Config->get()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -250,7 +250,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         
         $Config->reorderContext(array('country'));
 
-        $actual = $Config->get()->items;
+        $actual = $Config->get()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => true,
@@ -258,6 +258,51 @@ class ContexTest extends PHPUnit_Framework_Testcase
             'show_comment_ip' => 'uk_dont_show_comment_ip',
             'comment_query_criteria' => 'Acme\Comment\Criteria\Member',
             'unique_to_common' => 'value_only_shows_if_common_used'
+        );
+
+        $this->assertEquals($expected, $actual);
+    }
+
+
+    public function testMergeReplacesNumericIndexesAsValues()
+    {
+        $config = array(
+            'common' => array(
+                'some_vals' => ['one', 'two', 'three']
+            ),
+            'defaults' => array(
+                'UK' => array(
+                    'some_vals' => ['five']
+                ),
+                'Admin' => array(
+                    'comment_query_criteria' => 'Acme\Comment\Criteria\Admin'
+                )
+            ),
+            'conditions' => array(
+                'admin_uk' => new Condition(array('country' => 'UK', 'user' => 'Admin'),
+                                            array('some_vals' => ['six'])),
+                'ford_uk' => new Condition(array('country' => 'UK', 'manufacturer' => 'Ford'), 
+                                           array('some_vals' => ['seven'])),
+            )
+        );
+
+        $context = array(
+            'user' => 'Admin',
+            'country' => 'UK',
+            'manufacturer' => 'Ford'
+        );
+
+        $Config = new Config($context);
+            
+        $Config->addFilter('common', new CommonFilter($config));
+        $Config->addFilter('defaults', new DefaultsFilter($config));
+        $Config->addFilter('conditions', new ConditionFilter($config));
+        
+        $actual = $Config->get()->toArray();
+
+        $expected = array(
+            'some_vals' => ['seven'],
+            'comment_query_criteria' => 'Acme\Comment\Criteria\Admin'
         );
 
         $this->assertEquals($expected, $actual);
