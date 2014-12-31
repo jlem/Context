@@ -70,6 +70,6 @@ $Config->addFilter('defaults', new DefaultsFilter($config));
 $Config->addFilter('conditions', new ConditionFilter($config));
 
 // In request process
-$results = $Config->get();
+$results = $Config->load();
 
 var_dump($results);
