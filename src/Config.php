@@ -242,7 +242,7 @@ class Config
         }
 
         // Merge the filter data
-        return new ArrayOk(call_user_func_array('array_merge', $toMerge));
+        return new ArrayOk(call_user_func_array('array_replace_recursive', $toMerge));
     }
 
 
