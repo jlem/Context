@@ -37,6 +37,6 @@ class DefaultsFilter extends Filter
             }
         }
 
-        return (empty($toMerge)) ?: call_user_func_array('array_replace_recursive', $toMerge);
+        return (empty($toMerge)) ?: call_user_func_array('array_merge', $toMerge);
     }
 }

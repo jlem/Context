@@ -60,7 +60,7 @@ class ConditionFilter extends Filter
             }
         }
 
-        return empty($matchedConditions) ? $matchedConditions : call_user_func_array('array_replace_recursive', $matchedConditions);
+        return empty($matchedConditions) ? $matchedConditions : call_user_func_array('array_merge', $matchedConditions);
     }
 
 
