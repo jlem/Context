@@ -8,6 +8,7 @@ class Config
     protected $Context;
     protected $contextOrder = null;
     protected $clipContext = true;
+    protected $result;
 
     protected $filters = [];
     protected $disabledFilters = [];
@@ -131,14 +132,31 @@ class Config
      *
      * @param mixed string|null $key
      * @access public
-     * @return mixed
+     * @return ArrayOk
     */
 
-	public function get($key = null)
+	public function load()
 	{
-        $result = $this->mergeFilters();
-        return $key ? $result[$key] : $result;
+        if ($this->result) {
+            return $this->result;
+        }
+
+        return $this->result = $this->mergeFilters();
 	}
+
+
+
+    /**
+     * Gets a fresh instance of the merged configs, rather than a registry cache 
+     *
+     * @access public
+     * @return ArrayOk
+    */
+
+    public function refresh()
+    {
+        return $this->mergeFilters();
+    }
 
 
 
@@ -284,5 +302,10 @@ class Config
         }
 
         return array_diff_key($this->filters, $this->disabledFilters);
+    }
+
+    public function lazyAssemble()
+    {
+        // optional function for lazy assembly
     }
 }

@@ -65,7 +65,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         $Config->addFilter('defaults', new DefaultsFilter($config));
         $Config->addFilter('conditions', new ConditionFilter($config));
 
-        $actual = $Config->get()->toArray();
+        $actual = $Config->load()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -97,7 +97,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
 
         $Config->disableContext();
 
-        $actual = $Config->get()->toArray();
+        $actual = $Config->load()->toArray();
 
         $expected = $config['common'];
 
@@ -123,7 +123,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         $Config->disableContext();
         $Config->enableContext();
 
-        $actual = $Config->get()->toArray();
+        $actual = $Config->load()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -155,7 +155,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
 
         $Config->disableFilter('common');
 
-        $actual = $Config->get()->toArray();
+        $actual = $Config->load()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -186,7 +186,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         
         $Config->reorderContext('country,user,manufacturer');
 
-        $actual = $Config->get()->toArray();
+        $actual = $Config->load()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -218,7 +218,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         
         $Config->reorderContext(array('country', 'user', 'manufacturer'));
 
-        $actual = $Config->get()->toArray();
+        $actual = $Config->load()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => 'ford_uk',
@@ -250,7 +250,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         
         $Config->reorderContext(array('country'));
 
-        $actual = $Config->get()->toArray();
+        $actual = $Config->load()->toArray();
 
         $expected = array(
             'show_tuner_truck_module' => true,
@@ -298,7 +298,7 @@ class ContexTest extends PHPUnit_Framework_Testcase
         $Config->addFilter('defaults', new DefaultsFilter($config));
         $Config->addFilter('conditions', new ConditionFilter($config));
         
-        $actual = $Config->get()->toArray();
+        $actual = $Config->load()->toArray();
 
         $expected = array(
             'some_vals' => ['seven'],
